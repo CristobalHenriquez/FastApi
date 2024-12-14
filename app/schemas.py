@@ -1,5 +1,3 @@
-# app/schemas.py
-
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from datetime import date
@@ -156,7 +154,7 @@ class TipoInterferenciaRead(TipoInterferenciaBase):
 class ArbolBase(BaseModel):
     id_especie: int
     id_municipio: int
-    ubicacion: Optional[str] = None  # 'latitud, longitud'
+    ubicacion: Optional[str] = None
     calle: Optional[str] = None
     numero_aprox: Optional[int] = None
     identificacion: Optional[str] = None
@@ -170,14 +168,14 @@ class ArbolBase(BaseModel):
     tratamiento_previo: Optional[str] = None
     cazuela: Optional[str] = None
     requiere_tratamiento: Optional[bool] = False
-    ambito: Optional[str] = None  # 'urbano', 'rural'
+    ambito: Optional[str] = None
     protegido: Optional[bool] = False
     fecha_censo: Optional[date] = None
     id_usuario: Optional[int] = None
     interferencias: Optional[str] = None
     detalles_arbol: Optional[str] = None
     absorcion_co2: Optional[float] = None
-    edad: Optional[str] = None
+    edad: Optional[int] = None
     distancia_otros_ejemplares: Optional[str] = None
     distancia_cordon: Optional[str] = None
 
@@ -211,7 +209,7 @@ class MedicionBase(BaseModel):
     fecha_medicion: Optional[date] = None
     id_altura: Optional[int] = None
     id_diametro: Optional[int] = None
-    ubicacion: Optional[str] = None  # 'latitud, longitud'
+    ubicacion: Optional[str] = None
     calle: Optional[str] = None
     numero_aprox: Optional[int] = None
     barrio: Optional[str] = None
@@ -220,7 +218,7 @@ class MedicionBase(BaseModel):
     id_estado_base: Optional[int] = None
     id_condicion: Optional[int] = None
     tratamiento_previo: Optional[str] = None
-    cazuela: Optional[str] = None  # (estado)
+    cazuela: Optional[str] = None
     requiere_tratamiento: Optional[bool] = False
     ambito: Optional[str] = None
     protegido: Optional[bool] = False
@@ -228,7 +226,7 @@ class MedicionBase(BaseModel):
     interferencias: Optional[str] = None
     detalles_arbol: Optional[str] = None
     absorcion_co2: Optional[float] = None
-    edad: Optional[str] = None  # 'edad del árbol en esta medición'
+    edad: Optional[int] = None
     tipo_dano: Optional[str] = None
     intervencion_programada: Optional[bool] = False
     imagen_dano: Optional[str] = None
@@ -245,7 +243,7 @@ class MedicionRead(MedicionBase):
 # Foto Schemas
 class FotoBase(BaseModel):
     id_medicion: int
-    tipo_foto: str  # 'censo', 'estado_fitosanitario'
+    tipo_foto: str
     ruta_foto: str
 
 class FotoCreate(FotoBase):

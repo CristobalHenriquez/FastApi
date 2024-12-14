@@ -1,9 +1,19 @@
+# Ignorar el entorno virtual
 env/
+
+# Ignorar archivos compilados de Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Ignorar bases de datos locales
 *.db
 *.sqlite3
-alembic/
+
+# Ignorar migraciones generadas automáticamente pero no el archivo env.py
+alembic/*
+!alembic/env.py
+
+# Ignorar el archivo de variables de entorno
 .env

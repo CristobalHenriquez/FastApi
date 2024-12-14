@@ -1,6 +1,5 @@
-# app/models.py
-
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, Boolean, Date, Text
+import sqlalchemy
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, Boolean, Date, Text, Index, CheckConstraint
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -23,6 +22,10 @@ class Municipio(Base):
     usuarios = relationship("Usuario", back_populates="municipio")
     arboles = relationship("Arbol", back_populates="municipio")
 
+    __table_args__ = (
+        Index("ix_municipio_nombre", "nombre"),
+    )
+
 class Especie(Base):
     __tablename__ = "especie"
     id_especie = Column(Integer, primary_key=True, index=True)
@@ -32,10 +35,14 @@ class Especie(Base):
 
     arboles = relationship("Arbol", back_populates="especie")
 
+    __table_args__ = (
+        CheckConstraint(origen.in_(['nativo', 'exotico']), name="check_origen"),
+    )
+
 class Role(Base):
     __tablename__ = "role"
     id_role = Column(Integer, primary_key=True, index=True)
-    role_name = Column(String, unique=True, nullable=False)  # 'Superuser', 'AdminMunicipio', etc.
+    role_name = Column(String, unique=True, nullable=False)
     can_manage_users = Column(Boolean, default=False)
     can_manage_all_relevamientos = Column(Boolean, default=False)
     can_create_relevamientos = Column(Boolean, default=False)
@@ -59,12 +66,13 @@ class Usuario(Base):
 
     municipio = relationship("Municipio", back_populates="usuarios")
     role = relationship("Role", back_populates="usuarios")
-    created_by_user = relationship("Usuario", remote_side=[id_usuario])
+    created_by_user = relationship("Usuario", remote_side=[id_usuario], back_populates="created_usuarios")
+    created_usuarios = relationship("Usuario", back_populates="created_by_user")
 
 class Altura(Base):
     __tablename__ = "altura"
     id_altura = Column(Integer, primary_key=True, index=True)
-    rango_altura = Column(String, nullable=False)  # '0-0.5 m', etc.
+    rango_altura = Column(String, nullable=False)
 
     arboles = relationship("Arbol", back_populates="altura")
     mediciones = relationship("Medicion", back_populates="altura")
@@ -72,7 +80,7 @@ class Altura(Base):
 class DiametroTronco(Base):
     __tablename__ = "diametrotronco"
     id_diametro = Column(Integer, primary_key=True, index=True)
-    rango_diametro = Column(String, nullable=False)  # '0-10 cm', etc.
+    rango_diametro = Column(String, nullable=False)
 
     arboles = relationship("Arbol", back_populates="diametro")
     mediciones = relationship("Medicion", back_populates="diametro")
@@ -80,7 +88,7 @@ class DiametroTronco(Base):
 class EstadoFitosanitario(Base):
     __tablename__ = "estadofitosanitario"
     id_estado = Column(Integer, primary_key=True, index=True)
-    nombre_estado = Column(String, nullable=False)  # 'Bueno', etc.
+    nombre_estado = Column(String, nullable=False)
 
     arboles_copa = relationship("Arbol", back_populates="estado_copa", foreign_keys='Arbol.id_estado_copa')
     arboles_tronco = relationship("Arbol", back_populates="estado_tronco", foreign_keys='Arbol.id_estado_tronco')
@@ -92,7 +100,7 @@ class EstadoFitosanitario(Base):
 class CondicionesCrecimiento(Base):
     __tablename__ = "condicionescrecimiento"
     id_condicion = Column(Integer, primary_key=True, index=True)
-    nombre_condicion = Column(String, nullable=False)  # 'Buena', etc.
+    nombre_condicion = Column(String, nullable=False)
 
     arboles = relationship("Arbol", back_populates="condicion")
     mediciones = relationship("Medicion", back_populates="condicion")
@@ -100,7 +108,7 @@ class CondicionesCrecimiento(Base):
 class TipoInterferencia(Base):
     __tablename__ = "tipointerferencia"
     id_tipo_interferencia = Column(Integer, primary_key=True, index=True)
-    nombre_tipo = Column(String, nullable=False)  # 'Cableado', etc.
+    nombre_tipo = Column(String, nullable=False)
 
     interferencias = relationship("Interferencia", back_populates="tipo_interferencia")
 
@@ -109,7 +117,7 @@ class Arbol(Base):
     id_arbol = Column(Integer, primary_key=True, index=True)
     id_especie = Column(Integer, ForeignKey("especie.id_especie"), nullable=False)
     id_municipio = Column(Integer, ForeignKey("municipio.id_municipio"), nullable=False)
-    ubicacion = Column(String, nullable=True)  # 'latitud, longitud'
+    ubicacion = Column(String, nullable=True)
     calle = Column(String, nullable=True)
     numero_aprox = Column(Integer, nullable=True)
     identificacion = Column(String, nullable=True)
@@ -121,16 +129,16 @@ class Arbol(Base):
     id_estado_base = Column(Integer, ForeignKey("estadofitosanitario.id_estado"), nullable=True)
     id_condicion = Column(Integer, ForeignKey("condicionescrecimiento.id_condicion"), nullable=True)
     tratamiento_previo = Column(String, nullable=True)
-    cazuela = Column(String, nullable=True)  # (estado)
+    cazuela = Column(String, nullable=True)
     requiere_tratamiento = Column(Boolean, default=False)
-    ambito = Column(String, nullable=True)  # 'urbano', 'rural'
+    ambito = Column(String, nullable=True)
     protegido = Column(Boolean, default=False)
     fecha_censo = Column(Date, nullable=True)
     id_usuario = Column(Integer, ForeignKey("usuario.id_usuario"), nullable=True)
     interferencias = Column(Text, nullable=True)
     detalles_arbol = Column(Text, nullable=True)
     absorcion_co2 = Column(Float, nullable=True)
-    edad = Column(String, nullable=True)  # 'edad del árbol'
+    edad = Column(Integer, nullable=True)  # Cambiado a Integer
     distancia_otros_ejemplares = Column(String, nullable=True)
     distancia_cordon = Column(String, nullable=True)
 
@@ -144,6 +152,7 @@ class Arbol(Base):
     condicion = relationship("CondicionesCrecimiento", back_populates="arboles")
     usuario = relationship("Usuario", back_populates="arboles")
     interferencias_rel = relationship("Interferencia", back_populates="arbol")
+    mediciones = relationship("Medicion", back_populates="arbol")
 
 class Interferencia(Base):
     __tablename__ = "interferencia"
@@ -162,7 +171,7 @@ class Medicion(Base):
     fecha_medicion = Column(Date, nullable=True)
     id_altura = Column(Integer, ForeignKey("altura.id_altura"), nullable=True)
     id_diametro = Column(Integer, ForeignKey("diametrotronco.id_diametro"), nullable=True)
-    ubicacion = Column(String, nullable=True)  # 'latitud, longitud'
+    ubicacion = Column(String, nullable=True)
     calle = Column(String, nullable=True)
     numero_aprox = Column(Integer, nullable=True)
     barrio = Column(String, nullable=True)
@@ -171,18 +180,18 @@ class Medicion(Base):
     id_estado_base = Column(Integer, ForeignKey("estadofitosanitario.id_estado"), nullable=True)
     id_condicion = Column(Integer, ForeignKey("condicionescrecimiento.id_condicion"), nullable=True)
     tratamiento_previo = Column(String, nullable=True)
-    cazuela = Column(String, nullable=True)  # (estado)
+    cazuela = Column(String, nullable=True)
     requiere_tratamiento = Column(Boolean, default=False)
-    ambito = Column(String, nullable=True)  # 'urbano', 'rural'
+    ambito = Column(String, nullable=True)
     protegido = Column(Boolean, default=False)
     id_usuario = Column(Integer, ForeignKey("usuario.id_usuario"), nullable=True)
     interferencias = Column(Text, nullable=True)
     detalles_arbol = Column(Text, nullable=True)
     absorcion_co2 = Column(Float, nullable=True)
-    edad = Column(String, nullable=True)  # 'edad del árbol en esta medición'
+    edad = Column(Integer, nullable=True)
     tipo_dano = Column(String, nullable=True)
     intervencion_programada = Column(Boolean, default=False)
-    imagen_dano = Column(String, nullable=True)  # Ruta de imagen del daño
+    imagen_dano = Column(String, nullable=True)
 
     arbol = relationship("Arbol", back_populates="mediciones")
     altura = relationship("Altura", back_populates="mediciones")
@@ -198,12 +207,12 @@ class Foto(Base):
     __tablename__ = "foto"
     id_foto = Column(Integer, primary_key=True, index=True)
     id_medicion = Column(Integer, ForeignKey("medicion.id_medicion"), nullable=False)
-    tipo_foto = Column(String, nullable=False)  # 'censo', 'estado_fitosanitario'
+    tipo_foto = Column(String, nullable=False)
     ruta_foto = Column(String, nullable=False)
 
     medicion = relationship("Medicion", back_populates="fotos")
 
     __table_args__ = (
-        # Unique constraint en (id_medicion, tipo_foto)
         sqlalchemy.UniqueConstraint('id_medicion', 'tipo_foto', name='uix_id_medicion_tipo_foto'),
+        CheckConstraint(tipo_foto.in_(['censo', 'estado_fitosanitario']), name="check_tipo_foto"),
     )

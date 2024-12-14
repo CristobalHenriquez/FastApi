@@ -13,7 +13,7 @@ class ProvinciaRead(ProvinciaBase):
     id_provincia: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Municipio Schemas
 class MunicipioBase(BaseModel):
@@ -29,7 +29,7 @@ class MunicipioRead(MunicipioBase):
     id_municipio: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Especie Schemas
 class EspecieBase(BaseModel):
@@ -44,7 +44,7 @@ class EspecieRead(EspecieBase):
     id_especie: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Role Schemas
 class RoleBase(BaseModel):
@@ -63,7 +63,7 @@ class RoleRead(RoleBase):
     id_role: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Usuario Schemas
 class UsuarioBase(BaseModel):
@@ -83,7 +83,7 @@ class UsuarioRead(UsuarioBase):
     id_usuario: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Altura Schemas
 class AlturaBase(BaseModel):
@@ -96,7 +96,7 @@ class AlturaRead(AlturaBase):
     id_altura: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # DiametroTronco Schemas
 class DiametroTroncoBase(BaseModel):
@@ -109,7 +109,7 @@ class DiametroTroncoRead(DiametroTroncoBase):
     id_diametro: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # EstadoFitosanitario Schemas
 class EstadoFitosanitarioBase(BaseModel):
@@ -122,7 +122,7 @@ class EstadoFitosanitarioRead(EstadoFitosanitarioBase):
     id_estado: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # CondicionesCrecimiento Schemas
 class CondicionesCrecimientoBase(BaseModel):
@@ -135,7 +135,7 @@ class CondicionesCrecimientoRead(CondicionesCrecimientoBase):
     id_condicion: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # TipoInterferencia Schemas
 class TipoInterferenciaBase(BaseModel):
@@ -148,7 +148,7 @@ class TipoInterferenciaRead(TipoInterferenciaBase):
     id_tipo_interferencia: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Arbol Schemas
 class ArbolBase(BaseModel):
@@ -186,7 +186,7 @@ class ArbolRead(ArbolBase):
     id_arbol: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Interferencia Schemas
 class InterferenciaBase(BaseModel):
@@ -201,7 +201,7 @@ class InterferenciaRead(InterferenciaBase):
     id_interferencia: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Medicion Schemas
 class MedicionBase(BaseModel):
@@ -238,7 +238,7 @@ class MedicionRead(MedicionBase):
     id_medicion: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Foto Schemas
 class FotoBase(BaseModel):
@@ -253,4 +253,4 @@ class FotoRead(FotoBase):
     id_foto: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

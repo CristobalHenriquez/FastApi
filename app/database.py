@@ -14,7 +14,8 @@ if not DATABASE_URL:
 
 # Crear el motor de la base de datos
 engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+    DATABASE_URL,
+    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 )
 
 # Crear una sesión local para interactuar con la base de datos
@@ -22,3 +23,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base para los modelos
 Base = declarative_base()
+
+# Print opcional para verificar que DATABASE_URL se cargó correctamente
+print("Conectando a la base de datos:", DATABASE_URL)

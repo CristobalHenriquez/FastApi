@@ -147,6 +147,12 @@ def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):
 # Rutas para Arbol
 @app.post("/arboles/", response_model=schemas.ArbolRead)
 def crear_arbol(arbol: schemas.ArbolCreate, db: Session = Depends(get_db)):
+    # Validación: Si hay interferencia aérea, se deben especificar detalles.
+    if arbol.interferencia_aerea and not arbol.especificaciones_interferencia:
+        raise HTTPException(
+            status_code=400,
+            detail="Debe especificar detalles de la interferencia aérea si esta existe.",
+        )
     return crud.create_arbol(db=db, arbol=arbol)
 
 @app.get("/arboles/", response_model=List[schemas.ArbolRead])
@@ -162,6 +168,12 @@ def leer_arbol(arbol_id: int, db: Session = Depends(get_db)):
 
 @app.put("/arboles/{arbol_id}", response_model=schemas.ArbolRead)
 def actualizar_arbol(arbol_id: int, arbol: schemas.ArbolCreate, db: Session = Depends(get_db)):
+    # Validación: Si hay interferencia aérea, se deben especificar detalles.
+    if arbol.interferencia_aerea and not arbol.especificaciones_interferencia:
+        raise HTTPException(
+            status_code=400,
+            detail="Debe especificar detalles de la interferencia aérea si esta existe.",
+        )
     db_arbol = crud.update_arbol(db, arbol_id=arbol_id, arbol=arbol)
     if db_arbol is None:
         raise HTTPException(status_code=404, detail="Árbol no encontrado")
@@ -177,6 +189,12 @@ def eliminar_arbol(arbol_id: int, db: Session = Depends(get_db)):
 # Rutas para Medicion
 @app.post("/mediciones/", response_model=schemas.MedicionRead)
 def crear_medicion(medicion: schemas.MedicionCreate, db: Session = Depends(get_db)):
+    # Validación: Si hay interferencia aérea, se deben especificar detalles.
+    if medicion.interferencia_aerea and not medicion.especificaciones_interferencia:
+        raise HTTPException(
+            status_code=400,
+            detail="Debe especificar detalles de la interferencia aérea si esta existe.",
+        )
     return crud.create_medicion(db=db, medicion=medicion)
 
 @app.get("/mediciones/", response_model=List[schemas.MedicionRead])
@@ -192,6 +210,12 @@ def leer_medicion(medicion_id: int, db: Session = Depends(get_db)):
 
 @app.put("/mediciones/{medicion_id}", response_model=schemas.MedicionRead)
 def actualizar_medicion(medicion_id: int, medicion: schemas.MedicionCreate, db: Session = Depends(get_db)):
+    # Validación: Si hay interferencia aérea, se deben especificar detalles.
+    if medicion.interferencia_aerea and not medicion.especificaciones_interferencia:
+        raise HTTPException(
+            status_code=400,
+            detail="Debe especificar detalles de la interferencia aérea si esta existe.",
+        )
     db_medicion = crud.update_medicion(db, medicion_id=medicion_id, medicion=medicion)
     if db_medicion is None:
         raise HTTPException(status_code=404, detail="Medición no encontrada")

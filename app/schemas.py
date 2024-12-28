@@ -179,14 +179,22 @@ class ArbolBase(BaseModel):
     distancia_otros_ejemplares: Optional[str] = None
     distancia_cordon: Optional[str] = None
 
+    # Nuevos campos
+    ancho_vereda: Optional[float] = None
+    interferencia_aerea: Optional[bool] = False
+    especificaciones_interferencia: Optional[str] = None
+
+
 class ArbolCreate(ArbolBase):
     pass
+
 
 class ArbolRead(ArbolBase):
     id_arbol: int
 
     class Config:
         from_attributes = True
+
 
 # Interferencia Schemas
 class InterferenciaBase(BaseModel):
@@ -231,14 +239,22 @@ class MedicionBase(BaseModel):
     intervencion_programada: Optional[bool] = False
     imagen_dano: Optional[str] = None
 
+    # Nuevos campos
+    ancho_vereda: Optional[float] = None
+    interferencia_aerea: Optional[bool] = False
+    especificaciones_interferencia: Optional[str] = None
+
+
 class MedicionCreate(MedicionBase):
     pass
+
 
 class MedicionRead(MedicionBase):
     id_medicion: int
 
     class Config:
         from_attributes = True
+
 
 # Foto Schemas
 class FotoBase(BaseModel):

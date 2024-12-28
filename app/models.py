@@ -1,7 +1,19 @@
 import sqlalchemy
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, Boolean, Date, Text, Index, CheckConstraint
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    ForeignKey,
+    Float,
+    Boolean,
+    Date,
+    Text,
+    Index,
+    CheckConstraint,
+)
 from sqlalchemy.orm import relationship
 from .database import Base
+
 
 class Provincia(Base):
     __tablename__ = "provincia"
@@ -9,6 +21,7 @@ class Provincia(Base):
     nombre = Column(String, nullable=False)
 
     municipios = relationship("Municipio", back_populates="provincia")
+
 
 class Municipio(Base):
     __tablename__ = "municipio"
@@ -22,22 +35,22 @@ class Municipio(Base):
     usuarios = relationship("Usuario", back_populates="municipio")
     arboles = relationship("Arbol", back_populates="municipio")
 
-    __table_args__ = (
-        Index("ix_municipio_nombre", "nombre"),
-    )
+    __table_args__ = (Index("ix_municipio_nombre", "nombre"),)
+
 
 class Especie(Base):
     __tablename__ = "especie"
     id_especie = Column(Integer, primary_key=True, index=True)
     nombre_cientifico = Column(String, nullable=False)
     nombre_comun = Column(String, nullable=False)
-    origen = Column(String, nullable=False)  # 'nativo', 'exotico'
+    origen = Column(String, nullable=False)
 
     arboles = relationship("Arbol", back_populates="especie")
 
     __table_args__ = (
-        CheckConstraint(origen.in_(['nativo', 'exotico']), name="check_origen"),
+        CheckConstraint("origen IN ('nativo', 'exotico')", name="check_origen"),
     )
+
 
 class Role(Base):
     __tablename__ = "role"
@@ -51,6 +64,7 @@ class Role(Base):
     can_manage_municipio_data = Column(Boolean, default=False)
 
     usuarios = relationship("Usuario", back_populates="role")
+
 
 class Usuario(Base):
     __tablename__ = "usuario"
@@ -66,8 +80,11 @@ class Usuario(Base):
 
     municipio = relationship("Municipio", back_populates="usuarios")
     role = relationship("Role", back_populates="usuarios")
-    created_by_user = relationship("Usuario", remote_side=[id_usuario], back_populates="created_usuarios")
+    created_by_user = relationship("Usuario", remote_side=[id_usuario])
     created_usuarios = relationship("Usuario", back_populates="created_by_user")
+    arboles = relationship("Arbol", back_populates="usuario")
+    mediciones = relationship("Medicion", back_populates="usuario")
+
 
 class Altura(Base):
     __tablename__ = "altura"
@@ -77,6 +94,7 @@ class Altura(Base):
     arboles = relationship("Arbol", back_populates="altura")
     mediciones = relationship("Medicion", back_populates="altura")
 
+
 class DiametroTronco(Base):
     __tablename__ = "diametrotronco"
     id_diametro = Column(Integer, primary_key=True, index=True)
@@ -85,17 +103,19 @@ class DiametroTronco(Base):
     arboles = relationship("Arbol", back_populates="diametro")
     mediciones = relationship("Medicion", back_populates="diametro")
 
+
 class EstadoFitosanitario(Base):
     __tablename__ = "estadofitosanitario"
     id_estado = Column(Integer, primary_key=True, index=True)
     nombre_estado = Column(String, nullable=False)
 
-    arboles_copa = relationship("Arbol", back_populates="estado_copa", foreign_keys='Arbol.id_estado_copa')
-    arboles_tronco = relationship("Arbol", back_populates="estado_tronco", foreign_keys='Arbol.id_estado_tronco')
-    arboles_base = relationship("Arbol", back_populates="estado_base", foreign_keys='Arbol.id_estado_base')
-    mediciones_copa = relationship("Medicion", back_populates="estado_copa", foreign_keys='Medicion.id_estado_copa')
-    mediciones_tronco = relationship("Medicion", back_populates="estado_tronco", foreign_keys='Medicion.id_estado_tronco')
-    mediciones_base = relationship("Medicion", back_populates="estado_base", foreign_keys='Medicion.id_estado_base')
+    arboles_copa = relationship("Arbol", back_populates="estado_copa", foreign_keys="Arbol.id_estado_copa")
+    arboles_tronco = relationship("Arbol", back_populates="estado_tronco", foreign_keys="Arbol.id_estado_tronco")
+    arboles_base = relationship("Arbol", back_populates="estado_base", foreign_keys="Arbol.id_estado_base")
+    mediciones_copa = relationship("Medicion", back_populates="estado_copa", foreign_keys="Medicion.id_estado_copa")
+    mediciones_tronco = relationship("Medicion", back_populates="estado_tronco", foreign_keys="Medicion.id_estado_tronco")
+    mediciones_base = relationship("Medicion", back_populates="estado_base", foreign_keys="Medicion.id_estado_base")
+
 
 class CondicionesCrecimiento(Base):
     __tablename__ = "condicionescrecimiento"
@@ -105,12 +125,14 @@ class CondicionesCrecimiento(Base):
     arboles = relationship("Arbol", back_populates="condicion")
     mediciones = relationship("Medicion", back_populates="condicion")
 
+
 class TipoInterferencia(Base):
     __tablename__ = "tipointerferencia"
     id_tipo_interferencia = Column(Integer, primary_key=True, index=True)
     nombre_tipo = Column(String, nullable=False)
 
     interferencias = relationship("Interferencia", back_populates="tipo_interferencia")
+
 
 class Arbol(Base):
     __tablename__ = "arbol"
@@ -138,9 +160,14 @@ class Arbol(Base):
     interferencias = Column(Text, nullable=True)
     detalles_arbol = Column(Text, nullable=True)
     absorcion_co2 = Column(Float, nullable=True)
-    edad = Column(Integer, nullable=True)  # Cambiado a Integer
+    edad = Column(Integer, nullable=True)
     distancia_otros_ejemplares = Column(String, nullable=True)
     distancia_cordon = Column(String, nullable=True)
+
+    # Nuevos campos
+    ancho_vereda = Column(Float, nullable=True)  # Ancho de la vereda en metros
+    interferencia_aerea = Column(Boolean, default=False)  # True si hay interferencia aérea
+    especificaciones_interferencia = Column(String, nullable=True)  # Detalles de la interferencia aérea
 
     especie = relationship("Especie", back_populates="arboles")
     municipio = relationship("Municipio", back_populates="arboles")
@@ -154,6 +181,7 @@ class Arbol(Base):
     interferencias_rel = relationship("Interferencia", back_populates="arbol")
     mediciones = relationship("Medicion", back_populates="arbol")
 
+
 class Interferencia(Base):
     __tablename__ = "interferencia"
     id_interferencia = Column(Integer, primary_key=True, index=True)
@@ -163,6 +191,7 @@ class Interferencia(Base):
 
     arbol = relationship("Arbol", back_populates="interferencias_rel")
     tipo_interferencia = relationship("TipoInterferencia", back_populates="interferencias")
+
 
 class Medicion(Base):
     __tablename__ = "medicion"
@@ -193,6 +222,12 @@ class Medicion(Base):
     intervencion_programada = Column(Boolean, default=False)
     imagen_dano = Column(String, nullable=True)
 
+    # Nuevos campos
+    ancho_vereda = Column(Float, nullable=True)  # Ancho de la vereda en metros
+    interferencia_aerea = Column(Boolean, default=False)  # Indica si hay interferencia aérea
+    especificaciones_interferencia = Column(String, nullable=True)  # Detalle de la interferencia aérea
+
+    # Relaciones
     arbol = relationship("Arbol", back_populates="mediciones")
     altura = relationship("Altura", back_populates="mediciones")
     diametro = relationship("DiametroTronco", back_populates="mediciones")
@@ -213,6 +248,6 @@ class Foto(Base):
     medicion = relationship("Medicion", back_populates="fotos")
 
     __table_args__ = (
-        sqlalchemy.UniqueConstraint('id_medicion', 'tipo_foto', name='uix_id_medicion_tipo_foto'),
-        CheckConstraint(tipo_foto.in_(['censo', 'estado_fitosanitario']), name="check_tipo_foto"),
+        sqlalchemy.UniqueConstraint("id_medicion", "tipo_foto", name="uix_id_medicion_tipo_foto"),
+        CheckConstraint("tipo_foto IN ('censo', 'estado_fitosanitario')", name="check_tipo_foto"),
     )

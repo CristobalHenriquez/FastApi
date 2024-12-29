@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Cargar variables de entorno desde .env
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 # Cargar la URL de la base de datos desde las variables de entorno
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -24,5 +24,12 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # Base para los modelos
 Base = declarative_base()
 
-# Print opcional para verificar que DATABASE_URL se cargó correctamente
-print("Conectando a la base de datos:", DATABASE_URL)
+if __name__ == "__main__":
+    try:
+        with engine.connect() as connection:
+            print("Conexión exitosa a la base de datos:", DATABASE_URL)
+        # Crear las tablas definidas en los modelos si no existen
+        Base.metadata.create_all(bind=engine)
+        print("Tablas creadas exitosamente.")
+    except Exception as e:
+        print("Error al conectar o crear tablas en la base de datos:", str(e))

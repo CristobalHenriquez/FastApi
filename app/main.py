@@ -47,12 +47,16 @@ def actualizar_provincia(provincia_id: int, provincia: schemas.ProvinciaCreate, 
         raise HTTPException(status_code=404, detail="Provincia no encontrada")
     return db_provincia
 
-@app.delete("/provincias/{provincia_id}", response_model=schemas.ProvinciaRead)
+@app.delete("/provincias/{provincia_id}", status_code=204)
 def eliminar_provincia(provincia_id: int, db: Session = Depends(get_db)):
-    db_provincia = crud.delete_provincia(db, provincia_id=provincia_id)
-    if db_provincia is None:
+    # Intentar eliminar la provincia
+    eliminado = crud.delete_provincia(db, provincia_id=provincia_id)
+    if not eliminado:
+        # Si no existe, devolver 404
         raise HTTPException(status_code=404, detail="Provincia no encontrada")
-    return db_provincia
+    # Si se elimina con éxito, no retornamos contenido
+    return
+
 
 # Rutas para Municipio
 @app.post("/municipios/", response_model=schemas.MunicipioRead)
@@ -77,12 +81,16 @@ def actualizar_municipio(municipio_id: int, municipio: schemas.MunicipioCreate, 
         raise HTTPException(status_code=404, detail="Municipio no encontrado")
     return db_municipio
 
-@app.delete("/municipios/{municipio_id}", response_model=schemas.MunicipioRead)
+@app.delete("/municipios/{municipio_id}", status_code=204)
 def eliminar_municipio(municipio_id: int, db: Session = Depends(get_db)):
-    db_municipio = crud.delete_municipio(db, municipio_id=municipio_id)
-    if db_municipio is None:
+    # Intentar eliminar el municipio
+    eliminado = crud.delete_municipio(db, municipio_id=municipio_id)
+    if not eliminado:
+        # Si no se encuentra el municipio, devolver 404
         raise HTTPException(status_code=404, detail="Municipio no encontrado")
-    return db_municipio
+    # Si se elimina con éxito, no retornamos contenido
+    return
+
 
 # Rutas para Especie
 @app.post("/especies/", response_model=schemas.EspecieRead)
@@ -107,12 +115,16 @@ def actualizar_especie(especie_id: int, especie: schemas.EspecieCreate, db: Sess
         raise HTTPException(status_code=404, detail="Especie no encontrada")
     return db_especie
 
-@app.delete("/especies/{especie_id}", response_model=schemas.EspecieRead)
+@app.delete("/especies/{especie_id}", status_code=204)
 def eliminar_especie(especie_id: int, db: Session = Depends(get_db)):
-    db_especie = crud.delete_especie(db, especie_id=especie_id)
-    if db_especie is None:
+    # Intentar eliminar la especie
+    eliminado = crud.delete_especie(db, especie_id=especie_id)
+    if not eliminado:
+        # Si no se encuentra la especie, devolver 404
         raise HTTPException(status_code=404, detail="Especie no encontrada")
-    return db_especie
+    # Si se elimina con éxito, no retornamos contenido
+    return
+
 
 # Rutas para Usuario
 @app.post("/usuarios/", response_model=schemas.UsuarioRead)
@@ -137,12 +149,16 @@ def actualizar_usuario(usuario_id: int, usuario: schemas.UsuarioCreate, db: Sess
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return db_usuario
 
-@app.delete("/usuarios/{usuario_id}", response_model=schemas.UsuarioRead)
+@app.delete("/usuarios/{usuario_id}", status_code=204)
 def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):
-    db_usuario = crud.delete_usuario(db, usuario_id=usuario_id)
-    if db_usuario is None:
+    # Intentar eliminar el usuario
+    eliminado = crud.delete_usuario(db, usuario_id=usuario_id)
+    if not eliminado:
+        # Si no se encuentra el usuario, devolver 404
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return db_usuario
+    # Si se elimina con éxito, no retornamos contenido
+    return
+
 
 # Rutas para Arbol
 @app.post("/arboles/", response_model=schemas.ArbolRead)
@@ -179,12 +195,16 @@ def actualizar_arbol(arbol_id: int, arbol: schemas.ArbolCreate, db: Session = De
         raise HTTPException(status_code=404, detail="Árbol no encontrado")
     return db_arbol
 
-@app.delete("/arboles/{arbol_id}", response_model=schemas.ArbolRead)
+@app.delete("/arboles/{arbol_id}", status_code=204)
 def eliminar_arbol(arbol_id: int, db: Session = Depends(get_db)):
-    db_arbol = crud.delete_arbol(db, arbol_id=arbol_id)
-    if db_arbol is None:
+    # Intentar eliminar el árbol
+    eliminado = crud.delete_arbol(db, arbol_id=arbol_id)
+    if not eliminado:
+        # Si no se encuentra el árbol, devolver 404
         raise HTTPException(status_code=404, detail="Árbol no encontrado")
-    return db_arbol
+    # Si se elimina con éxito, no retornamos contenido
+    return
+
 
 # Rutas para Medicion
 @app.post("/mediciones/", response_model=schemas.MedicionRead)
@@ -221,17 +241,25 @@ def actualizar_medicion(medicion_id: int, medicion: schemas.MedicionCreate, db: 
         raise HTTPException(status_code=404, detail="Medición no encontrada")
     return db_medicion
 
-@app.delete("/mediciones/{medicion_id}", response_model=schemas.MedicionRead)
+@app.delete("/mediciones/{medicion_id}", status_code=204)
 def eliminar_medicion(medicion_id: int, db: Session = Depends(get_db)):
-    db_medicion = crud.delete_medicion(db, medicion_id=medicion_id)
-    if db_medicion is None:
+    # Intentar eliminar la medición
+    eliminado = crud.delete_medicion(db, medicion_id=medicion_id)
+    if not eliminado:
+        # Si no se encuentra la medición, devolver 404
         raise HTTPException(status_code=404, detail="Medición no encontrada")
-    return db_medicion
+    # Si se elimina con éxito, no retornamos contenido
+    return
+
 
 # Rutas para Foto
-@app.post("/fotos/", response_model=schemas.FotoRead)
+@app.post("/fotos/", response_model=schemas.FotoRead, status_code=201)
 def crear_foto(foto: schemas.FotoCreate, db: Session = Depends(get_db)):
-    return crud.create_foto(db=db, foto=foto)
+    # Crear la foto
+    try:
+        return crud.create_foto(db=db, foto=foto)
+    except Exception:
+        raise HTTPException(status_code=409, detail="Conflicto al crear la foto.")
 
 @app.get("/fotos/", response_model=List[schemas.FotoRead])
 def leer_fotos(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -251,9 +279,12 @@ def actualizar_foto(foto_id: int, foto: schemas.FotoCreate, db: Session = Depend
         raise HTTPException(status_code=404, detail="Foto no encontrada")
     return db_foto
 
-@app.delete("/fotos/{foto_id}", response_model=schemas.FotoRead)
+@app.delete("/fotos/{foto_id}", status_code=204)
 def eliminar_foto(foto_id: int, db: Session = Depends(get_db)):
-    db_foto = crud.delete_foto(db, foto_id=foto_id)
-    if db_foto is None:
+    # Intentar eliminar la foto
+    eliminado = crud.delete_foto(db, foto_id=foto_id)
+    if not eliminado:
+        # Si no se encuentra la foto, devolver 404
         raise HTTPException(status_code=404, detail="Foto no encontrada")
-    return db_foto
+    # Si se elimina con éxito, no retornamos contenido
+    return

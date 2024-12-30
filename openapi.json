@@ -21,7 +21,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
@@ -196,15 +196,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ProvinciaRead"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Successful Response"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -234,7 +227,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
@@ -409,15 +402,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/MunicipioRead"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Successful Response"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -447,7 +433,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
@@ -622,15 +608,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/EspecieRead"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Successful Response"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -660,7 +639,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
@@ -835,15 +814,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UsuarioRead"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Successful Response"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -873,7 +845,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
@@ -1048,15 +1020,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ArbolRead"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Successful Response"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -1086,7 +1051,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
@@ -1261,15 +1226,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/MedicionRead"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Successful Response"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -1299,7 +1257,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
@@ -1474,15 +1432,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/FotoRead"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Successful Response"
                     },
                     "422": {
                         "description": "Validation Error",

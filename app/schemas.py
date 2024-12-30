@@ -1,6 +1,7 @@
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, validator, Field
 from typing import Optional, List
 from datetime import date
+
 
 # Provincia Schemas
 class ProvinciaBase(BaseModel):
@@ -13,6 +14,7 @@ class ProvinciaBase(BaseModel):
         return value.title()  # Capitaliza el nombre
 
 class ProvinciaCreate(ProvinciaBase):
+    nombre: str
     pass
 
 class ProvinciaRead(ProvinciaBase):
@@ -21,40 +23,44 @@ class ProvinciaRead(ProvinciaBase):
     class Config:
         from_attributes = True
 
-
-# Municipio Schemas
+# Base Schema para Municipio
 class MunicipioBase(BaseModel):
-    id_provincia: int
-    nombre: str
-    latitud: Optional[float] = None
-    longitud: Optional[float] = None
+    id_provincia: int = Field(..., description="ID de la provincia asociada")
+    nombre: str = Field(..., description="Nombre del municipio")
+    latitud: Optional[float] = Field(None, description="Latitud del municipio (opcional)")
+    longitud: Optional[float] = Field(None, description="Longitud del municipio (opcional)")
 
     @validator("nombre")
-    def validate_nombre(cls, value):
+    @classmethod
+    def validar_nombre(cls, value: str) -> str:
         if not value.strip():
             raise ValueError("El nombre del municipio no puede estar vacío.")
         return value.title()  # Capitaliza el nombre
 
     @validator("latitud")
-    def validate_latitud(cls, value):
+    @classmethod
+    def validar_latitud(cls, value: Optional[float]) -> Optional[float]:
         if value is not None and (value < -90 or value > 90):
             raise ValueError("La latitud debe estar entre -90 y 90 grados.")
         return value
 
     @validator("longitud")
-    def validate_longitud(cls, value):
+    @classmethod
+    def validar_longitud(cls, value: Optional[float]) -> Optional[float]:
         if value is not None and (value < -180 or value > 180):
             raise ValueError("La longitud debe estar entre -180 y 180 grados.")
         return value
 
+# Schema para creación
 class MunicipioCreate(MunicipioBase):
     pass
 
+# Schema para lectura
 class MunicipioRead(MunicipioBase):
-    id_municipio: int
+    id_municipio: int = Field(..., description="ID único del municipio")
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # Habilita mapeo desde modelos ORM
 
 # Especie Schemas
 class EspecieBase(BaseModel):
@@ -86,30 +92,33 @@ class EspecieRead(EspecieBase):
         from_attributes = True
 
 
-# Role Schemas
+# Base Schema para Role
 class RoleBase(BaseModel):
-    role_name: str
-    can_manage_users: Optional[bool] = False
-    can_manage_all_relevamientos: Optional[bool] = False
-    can_create_relevamientos: Optional[bool] = False
-    can_modify_own_relevamientos: Optional[bool] = False
-    can_generate_reports: Optional[bool] = False
-    can_manage_municipio_data: Optional[bool] = False
+    role_name: str = Field(..., description="Nombre del rol")
+    can_manage_users: Optional[bool] = Field(False, description="Permiso para gestionar usuarios")
+    can_manage_all_relevamientos: Optional[bool] = Field(False, description="Permiso para gestionar todos los relevamientos")
+    can_create_relevamientos: Optional[bool] = Field(False, description="Permiso para crear relevamientos")
+    can_modify_own_relevamientos: Optional[bool] = Field(False, description="Permiso para modificar sus propios relevamientos")
+    can_generate_reports: Optional[bool] = Field(False, description="Permiso para generar reportes")
+    can_manage_municipio_data: Optional[bool] = Field(False, description="Permiso para gestionar datos del municipio")
 
     @validator("role_name")
-    def validate_role_name(cls, value):
+    @classmethod
+    def validar_role_name(cls, value: str) -> str:
         if not value.strip():
             raise ValueError("El nombre del rol no puede estar vacío.")
-        return value.title()  # Normaliza el nombre capitalizando cada palabra
+        return value.title()  # Capitaliza el nombre del rol
 
+# Schema para creación
 class RoleCreate(RoleBase):
     pass
 
+# Schema para lectura
 class RoleRead(RoleBase):
-    id_role: int
+    id_role: int = Field(..., description="ID único del rol")
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # Habilita mapeo desde modelos ORM
 
 
 # Usuario Schemas
@@ -151,59 +160,66 @@ class UsuarioRead(UsuarioBase):
         from_attributes = True
 
 
-# Altura Schemas
+# Base Schema para Altura
 class AlturaBase(BaseModel):
-    rango_altura: str  # Ejemplo de formato esperado: "5-10 m"
+    rango_altura: str = Field(..., description="Rango de altura esperado en el formato 'X-Y m'")
 
     @validator("rango_altura")
-    def validate_rango_altura(cls, value):
+    @classmethod
+    def validar_rango_altura(cls, value: str) -> str:
         if not value.strip():
             raise ValueError("El rango de altura no puede estar vacío.")
         if "-" not in value or not all(part.strip().isdigit() for part in value.replace("m", "").split("-")):
             raise ValueError("El rango de altura debe estar en el formato 'X-Y m'.")
         return value
 
+# Schema para creación
 class AlturaCreate(AlturaBase):
     pass
 
+# Schema para lectura
 class AlturaRead(AlturaBase):
-    id_altura: int
+    id_altura: int = Field(..., description="ID único del rango de altura")
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # Habilita mapeo desde modelos ORM
 
 
-# DiametroTronco Schemas
+# Base Schema para Diámetro del Tronco
 class DiametroTroncoBase(BaseModel):
-    rango_diametro: str  # Ejemplo de formato esperado: "20-30 cm"
+    rango_diametro: str = Field(..., description="Rango de diámetro esperado en el formato 'X-Y cm'")
 
     @validator("rango_diametro")
-    def validate_rango_diametro(cls, value):
+    @classmethod
+    def validar_rango_diametro(cls, value: str) -> str:
         if not value.strip():
             raise ValueError("El rango de diámetro no puede estar vacío.")
         if "-" not in value or not all(part.strip().isdigit() for part in value.replace("cm", "").split("-")):
             raise ValueError("El rango de diámetro debe estar en el formato 'X-Y cm'.")
         return value
 
+# Schema para creación
 class DiametroTroncoCreate(DiametroTroncoBase):
     pass
 
+# Schema para lectura
 class DiametroTroncoRead(DiametroTroncoBase):
-    id_diametro: int
+    id_diametro: int = Field(..., description="ID único del rango de diámetro")
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # Habilita mapeo desde modelos ORM
+
 
 
 # EstadoFitosanitario Schemas
 class EstadoFitosanitarioBase(BaseModel):
     nombre_estado: Optional[str] = None  # Permitimos valores nulos o vacíos
 
-    @validator("nombre_estado")
+    @validator("nombre_estado", pre=True, always=True)
     def validate_nombre_estado(cls, value):
         if value is not None and not value.strip():
             raise ValueError("El nombre del estado fitosanitario no puede ser una cadena vacía.")
-        return value.title() if value else value
+        return value.title() if value else None  # Normaliza el valor o deja como None
 
 class EstadoFitosanitarioCreate(EstadoFitosanitarioBase):
     pass
@@ -219,11 +235,11 @@ class EstadoFitosanitarioRead(EstadoFitosanitarioBase):
 class CondicionesCrecimientoBase(BaseModel):
     nombre_condicion: str
 
-    @validator("nombre_condicion")
+    @validator("nombre_condicion", pre=True, always=True)
     def validate_nombre_condicion(cls, value):
         if not value.strip():
             raise ValueError("El nombre de la condición de crecimiento no puede estar vacío.")
-        return value.title()  # Convierte a formato título para uniformidad
+        return value.title()  # Normaliza el valor a formato título para uniformidad
 
 class CondicionesCrecimientoCreate(CondicionesCrecimientoBase):
     pass
@@ -239,11 +255,11 @@ class CondicionesCrecimientoRead(CondicionesCrecimientoBase):
 class TipoInterferenciaBase(BaseModel):
     nombre_tipo: str
 
-    @validator("nombre_tipo")
+    @validator("nombre_tipo", pre=True, always=True)
     def validate_nombre_tipo(cls, value):
         if not value.strip():
             raise ValueError("El nombre del tipo de interferencia no puede estar vacío.")
-        return value.title()  # Convierte a formato título para uniformidad
+        return value.title()  # Normaliza el nombre a formato título para uniformidad
 
 class TipoInterferenciaCreate(TipoInterferenciaBase):
     pass
@@ -253,7 +269,6 @@ class TipoInterferenciaRead(TipoInterferenciaBase):
 
     class Config:
         from_attributes = True
-
 
 # Arbol Schemas
 class ArbolBase(BaseModel):
@@ -280,7 +295,7 @@ class ArbolBase(BaseModel):
     interferencias: Optional[str] = None
     detalles_arbol: Optional[str] = None
     absorcion_co2: Optional[float] = None
-    edad: Optional[int] = None
+    edad: Optional[str] = None  # Ahora es categórica (e.g., "adulto" o "juvenil")
     distancia_otros_ejemplares: Optional[str] = None
     distancia_cordon: Optional[str] = None
 
@@ -296,7 +311,7 @@ class ArbolBase(BaseModel):
             raise ValueError("El ancho de la vereda no puede ser negativo.")
         return value
 
-    @validator("especificaciones_interferencia")
+    @validator("especificaciones_interferencia", pre=True, always=True)
     def validate_especificaciones_interferencia(cls, value, values):
         if values.get("interferencia_aerea") and not value:
             raise ValueError("Las especificaciones de interferencia son requeridas si hay interferencia aérea.")
@@ -310,6 +325,19 @@ class ArbolBase(BaseModel):
             raise ValueError("La identificación no puede exceder los 50 caracteres.")
         return value.strip() if value else value
 
+    @validator("edad")
+    def validate_edad(cls, value):
+        allowed_values = {"adulto", "juvenil"}
+        if value and value.lower() not in allowed_values:
+            raise ValueError(f"La edad debe ser una de las siguientes: {allowed_values}.")
+        return value.title() if value else value  # Normaliza a formato título
+
+    @validator("absorcion_co2")
+    def validate_absorcion_co2(cls, value):
+        if value is not None and value < 0:
+            raise ValueError("La absorción de CO2 no puede ser negativa.")
+        return value
+
 class ArbolCreate(ArbolBase):
     pass
 
@@ -318,6 +346,7 @@ class ArbolRead(ArbolBase):
 
     class Config:
         from_attributes = True
+
 
 
 # Interferencia Schemas
@@ -329,9 +358,11 @@ class InterferenciaBase(BaseModel):
     # Validadores
     @validator("descripcion")
     def validate_descripcion(cls, value):
-        if value and len(value) > 500:
-            raise ValueError("La descripción no puede exceder los 500 caracteres.")
-        return value.strip() if value else value
+        if value:
+            value = value.strip()  # Elimina espacios innecesarios
+            if len(value) > 500:
+                raise ValueError("La descripción no puede exceder los 500 caracteres.")
+        return value
 
 class InterferenciaCreate(InterferenciaBase):
     pass
@@ -341,7 +372,7 @@ class InterferenciaRead(InterferenciaBase):
 
     class Config:
         from_attributes = True
-
+# Medicion Schemas
 class MedicionBase(BaseModel):
     id_arbol: int
     fecha_medicion: Optional[date] = None
@@ -381,7 +412,7 @@ class MedicionBase(BaseModel):
             raise ValueError("El ancho de la vereda no puede ser negativo.")
         return value
 
-    @validator("especificaciones_interferencia")
+    @validator("especificaciones_interferencia", pre=True, always=True)
     def validate_especificaciones_interferencia(cls, value, values):
         interferencia_aerea = values.get("interferencia_aerea", False)
         if interferencia_aerea and not value:
@@ -392,8 +423,28 @@ class MedicionBase(BaseModel):
 
     @validator("tipo_dano")
     def validate_tipo_dano(cls, value):
-        if value and len(value) > 100:
-            raise ValueError("El tipo de daño no puede exceder los 100 caracteres.")
+        if value:
+            value = value.strip()
+            if len(value) > 100:
+                raise ValueError("El tipo de daño no puede exceder los 100 caracteres.")
+        return value
+
+    @validator("edad")
+    def validate_edad(cls, value):
+        if value is not None and value < 0:
+            raise ValueError("La edad no puede ser negativa.")
+        return value
+
+    @validator("absorcion_co2")
+    def validate_absorcion_co2(cls, value):
+        if value is not None and value < 0:
+            raise ValueError("La absorción de CO2 no puede ser negativa.")
+        return value
+
+    @validator("imagen_dano")
+    def validate_imagen_dano(cls, value):
+        if value and len(value) > 255:
+            raise ValueError("La URL de la imagen de daño no puede exceder los 255 caracteres.")
         return value.strip() if value else value
 
 class MedicionCreate(MedicionBase):
@@ -406,6 +457,7 @@ class MedicionRead(MedicionBase):
         from_attributes = True
 
 
+# Foto Schemas
 class FotoBase(BaseModel):
     id_medicion: int
     tipo_foto: str
@@ -414,10 +466,10 @@ class FotoBase(BaseModel):
     # Validadores
     @validator("tipo_foto")
     def validate_tipo_foto(cls, value):
-        valid_tipos = ["censo", "estado_fitosanitario"]
+        valid_tipos = ["censo", "estado_fitosanitario", "daño", "general"]
         if value not in valid_tipos:
             raise ValueError(f"El tipo de foto debe ser uno de los siguientes: {', '.join(valid_tipos)}.")
-        return value.strip()
+        return value.strip().lower()  # Normalizamos el tipo de foto en minúsculas
 
     @validator("ruta_foto")
     def validate_ruta_foto(cls, value):
@@ -425,6 +477,8 @@ class FotoBase(BaseModel):
             raise ValueError("La ruta de la foto es obligatoria.")
         if len(value) > 255:
             raise ValueError("La ruta de la foto no puede exceder los 255 caracteres.")
+        if not value.startswith(("http://", "https://")):
+            raise ValueError("La ruta de la foto debe ser una URL válida que comience con 'http://' o 'https://'.")
         return value.strip()
 
 class FotoCreate(FotoBase):
@@ -435,3 +489,4 @@ class FotoRead(FotoBase):
 
     class Config:
         from_attributes = True
+

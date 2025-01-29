@@ -64,11 +64,13 @@ class Role(Base):
 class Usuario(Base):
     __tablename__ = "usuario"
 
-    id_usuario = Column(Integer, primary_key=True, index=True)
+    id_usuario = Column(Integer, primary_key=True, index=True, ondelete="CASCADE")
     id_municipio = Column(Integer, ForeignKey("municipio.id_municipio", ondelete="CASCADE"), nullable=False)
     id_role = Column(Integer, ForeignKey("role.id_role", ondelete="CASCADE"), nullable=False)
     nombre = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False, index=True)
+    hashed_password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)  # 🔹 Se agrega para manejar autenticación
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
     date_joined = Column(Date, nullable=False)
@@ -81,14 +83,16 @@ class Usuario(Base):
     mediciones = relationship("Medicion", back_populates="usuario", cascade="all, delete-orphan")
 
 
+
+
 class Arbol(Base):
     __tablename__ = "arbol"
 
     id_arbol = Column(Integer, primary_key=True, index=True)
     id_especie = Column(Integer, ForeignKey("especie.id_especie", ondelete="CASCADE"), nullable=False)
     id_municipio = Column(Integer, ForeignKey("municipio.id_municipio", ondelete="CASCADE"), nullable=False)
-    latitude = Column(Float, nullable=True)
-    longitude = Column(Float, nullable=True)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
     calle = Column(String, nullable=True)
     numero_aprox = Column(Integer, nullable=True)
     identificacion = Column(String, nullable=True)
@@ -119,6 +123,10 @@ class Arbol(Base):
         CheckConstraint("diametro_tronco IN ('1-5 cm', '5-15 cm', '> 15 cm', 'Especificar')"),
         CheckConstraint("ambito IN ('Urbano', 'Rural', 'Otro')"),
         CheckConstraint("interferencia_aerea IN ('Línea alta', 'Iluminaria y media', 'Baja')"),
+
+    CheckConstraint("tipo_cable IN ('Preensamblado', 'Cable desnudo')"),
+    CheckConstraint("tipo_intervencion IN ('Poda de altura', 'Poda de formación', 'Poda de aclareo', 'Raleo', 'Aplicación de fungicida')"),
+
     )
 
     @validates("altura", "diametro_tronco", "ambito", "interferencia_aerea")

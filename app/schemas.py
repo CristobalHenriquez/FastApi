@@ -1,18 +1,10 @@
+
 from pydantic import BaseModel, EmailStr, validator, Field
 from typing import Optional, List
 from datetime import date
 
 
-# 🔹 Listas de valores válidos (Evita repetir regex)
-ALTURA_VALUES = {"1-2 m", ">3 m", "3-5 m", "> 5m"}
-DIAMETRO_TRONCO_VALUES = {"1-5 cm", "5-15 cm", "> 15 cm", "Especificar"}
-AMBITO_VALUES = {"Urbano", "Rural", "Otro"}
-INTERFERENCIA_AEREA_VALUES = {"Línea alta", "Iluminaria y media", "Baja"}
-TIPO_CABLE_VALUES = {"Preensamblado", "Cable desnudo"}
-TIPO_INTERVENCION_VALUES = {"Poda de altura", "Poda de formación", "Poda de aclareo", "Raleo", "Aplicación de fungicida"}
-
-
-# Provincia Schemas
+# --- Provincia Schemas ---
 class ProvinciaBase(BaseModel):
     nombre: str
 
@@ -32,7 +24,7 @@ class ProvinciaRead(ProvinciaBase):
         from_attributes = True
 
 
-# Municipio Schemas
+# --- Municipio Schemas ---
 class MunicipioBase(BaseModel):
     id_provincia: int
     nombre: str
@@ -55,7 +47,7 @@ class MunicipioRead(MunicipioBase):
         from_attributes = True
 
 
-# Especie Schemas
+# --- Especie Schemas ---
 class EspecieBase(BaseModel):
     nombre_cientifico: str
     nombre_comun: str
@@ -63,7 +55,7 @@ class EspecieBase(BaseModel):
 
     @validator("origen")
     def validate_origen(cls, value):
-        if value.lower() not in {"nativo", "exotico"}:
+        if value not in ("nativo", "exotico"):
             raise ValueError("El origen debe ser 'nativo' o 'exotico'.")
         return value.lower()
 
@@ -77,7 +69,7 @@ class EspecieRead(EspecieBase):
         from_attributes = True
 
 
-# Role Schemas
+# --- Role Schemas ---
 class RoleBase(BaseModel):
     role_name: str
     can_manage_users: Optional[bool] = False
@@ -96,12 +88,13 @@ class RoleRead(RoleBase):
         from_attributes = True
 
 
-# Usuario Schemas
+# --- Usuario Schemas ---
 class UsuarioBase(BaseModel):
     id_municipio: int
     id_role: int
     nombre: str
     email: EmailStr
+    hashed_password: str
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False
     date_joined: Optional[date] = None
@@ -117,7 +110,7 @@ class UsuarioRead(UsuarioBase):
         from_attributes = True
 
 
-# Arbol Schemas
+# --- Arbol Schemas ---
 class ArbolBase(BaseModel):
     id_especie: int
     id_municipio: int
@@ -127,39 +120,20 @@ class ArbolBase(BaseModel):
     numero_aprox: Optional[int] = None
     identificacion: Optional[str] = None
     barrio: Optional[str] = None
-    altura: str
-    diametro_tronco: str
-    ambito: str
+    altura: str = Field(..., regex="^(1-2 m|>3 m|3-5 m|> 5m)$")
+    diametro_tronco: str = Field(..., regex="^(1-5 cm|5-15 cm|> 15 cm|Especificar)$")
+    ambito: str = Field(..., regex="^(Urbano|Rural|Otro)$")
     distancia_entre_ejemplares: str
     distancia_al_cordon: str
-    interferencia_aerea: str
-    tipo_cable: Optional[str] = None
+    interferencia_aerea: str = Field(..., regex="^(Línea alta|Iluminaria y media|Baja)$")
+    tipo_cable: Optional[str] = Field(None, regex="^(Preensamblado|Cable desnudo)?$")
     requiere_intervencion: bool
-    tipo_intervencion: Optional[str] = None
+    tipo_intervencion: Optional[str] = Field(None, regex="^(Poda de altura|Poda de formación|Poda de aclareo|Raleo|Aplicación de fungicida)?$")
     tratamiento_previo: Optional[str] = None
     cazuela: Optional[str] = None
     protegido: bool
     fecha_censo: Optional[date] = None
     id_usuario: Optional[int] = None
-
-    # 🔹 Validaciones con listas en lugar de regex
-    @validator("altura")
-    def validar_altura(cls, value):
-        if value not in ALTURA_VALUES:
-            raise ValueError(f"Valor inválido para altura. Opciones: {', '.join(ALTURA_VALUES)}")
-        return value
-
-    @validator("diametro_tronco")
-    def validar_diametro(cls, value):
-        if value not in DIAMETRO_TRONCO_VALUES:
-            raise ValueError(f"Valor inválido para diámetro. Opciones: {', '.join(DIAMETRO_TRONCO_VALUES)}")
-        return value
-
-    @validator("ambito")
-    def validar_ambito(cls, value):
-        if value not in AMBITO_VALUES:
-            raise ValueError(f"Valor inválido para ámbito. Opciones: {', '.join(AMBITO_VALUES)}")
-        return value
 
 class ArbolCreate(ArbolBase):
     pass
@@ -171,10 +145,25 @@ class ArbolRead(ArbolBase):
         from_attributes = True
 
 
-# Medicion Schemas
-class MedicionBase(ArbolBase):
+# --- Medicion Schemas ---
+class MedicionBase(BaseModel):
     id_arbol: int
     fecha_medicion: Optional[date] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    altura: str = Field(..., regex="^(1-2 m|>3 m|3-5 m|> 5m)$")
+    diametro_tronco: str = Field(..., regex="^(1-5 cm|5-15 cm|> 15 cm|Especificar)$")
+    ambito: str = Field(..., regex="^(Urbano|Rural|Otro)$")
+    distancia_entre_ejemplares: str
+    distancia_al_cordon: str
+    interferencia_aerea: str = Field(..., regex="^(Línea alta|Iluminaria y media|Baja)$")
+    tipo_cable: Optional[str] = Field(None, regex="^(Preensamblado|Cable desnudo)?$")
+    requiere_intervencion: bool
+    tipo_intervencion: Optional[str] = Field(None, regex="^(Poda de altura|Poda de formación|Poda de aclareo|Raleo|Aplicación de fungicida)?$")
+    tratamiento_previo: Optional[str] = None
+    cazuela: Optional[str] = None
+    protegido: bool
+    id_usuario: Optional[int] = None
 
 class MedicionCreate(MedicionBase):
     pass
@@ -186,19 +175,11 @@ class MedicionRead(MedicionBase):
         from_attributes = True
 
 
-# Foto Schemas
+# --- Foto Schemas ---
 class FotoBase(BaseModel):
     id_medicion: int
     tipo_foto: str
     ruta_foto: str
-
-    @validator("tipo_foto")
-    def validar_tipo_foto(cls, value):
-        return value.strip().title()
-
-    @validator("ruta_foto")
-    def validar_ruta_foto(cls, value):
-        return value.strip()
 
 class FotoCreate(FotoBase):
     pass

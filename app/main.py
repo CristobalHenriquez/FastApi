@@ -6,14 +6,17 @@ from .database import SessionLocal, engine
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Cargar variables de entorno
+# Cargar variables de entorno
+load_dotenv()
 
+# Crear todas las tablas en la base de datos
 models.Base.metadata.create_all(bind=engine)
 
+# Instanciar la aplicación FastAPI
 app = FastAPI(
     title="API REST - Gestión de Árboles",
-    description="API para gestionar información de árboles, municipios, especies, usuarios, y más.",
-    version="1.0.0",
+    description="API para gestionar información de árboles, municipios, especies, usuarios, mediciones y más.",
+    version="2.0.0",
 )
 
 # Dependencia para obtener la sesión de la base de datos
@@ -24,7 +27,7 @@ def get_db():
     finally:
         db.close()
 
-# Rutas para Provincia
+# --- RUTAS PARA PROVINCIA ---
 @app.post("/provincias/", response_model=schemas.ProvinciaRead, status_code=201)
 def crear_provincia(provincia: schemas.ProvinciaCreate, db: Session = Depends(get_db)):
     return crud.create_provincia(db=db, provincia=provincia)
@@ -54,8 +57,7 @@ def eliminar_provincia(provincia_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Provincia no encontrada")
     return
 
-
-# Rutas para Municipio
+# --- RUTAS PARA MUNICIPIO ---
 @app.post("/municipios/", response_model=schemas.MunicipioRead, status_code=201)
 def crear_municipio(municipio: schemas.MunicipioCreate, db: Session = Depends(get_db)):
     return crud.create_municipio(db=db, municipio=municipio)
@@ -85,37 +87,37 @@ def eliminar_municipio(municipio_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Municipio no encontrado")
     return
 
-# Rutas para Especie
-@app.post("/especies/", response_model=schemas.EspecieRead, status_code=201)
-def crear_especie(especie: schemas.EspecieCreate, db: Session = Depends(get_db)):
-    return crud.create_especie(db=db, especie=especie)
+# --- RUTAS PARA ROLE ---
+@app.post("/roles/", response_model=schemas.RoleRead, status_code=201)
+def crear_role(role: schemas.RoleCreate, db: Session = Depends(get_db)):
+    return crud.create_role(db=db, role=role)
 
-@app.get("/especies/", response_model=List[schemas.EspecieRead])
-def leer_especies(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_especies(db, skip=skip, limit=limit)
+@app.get("/roles/", response_model=List[schemas.RoleRead])
+def leer_roles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_roles(db, skip=skip, limit=limit)
 
-@app.get("/especies/{especie_id}", response_model=schemas.EspecieRead)
-def leer_especie(especie_id: int, db: Session = Depends(get_db)):
-    db_especie = crud.get_especie(db, especie_id=especie_id)
-    if not db_especie:
-        raise HTTPException(status_code=404, detail="Especie no encontrada")
-    return db_especie
+@app.get("/roles/{role_id}", response_model=schemas.RoleRead)
+def leer_role(role_id: int, db: Session = Depends(get_db)):
+    db_role = crud.get_role(db, role_id=role_id)
+    if not db_role:
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
+    return db_role
 
-@app.put("/especies/{especie_id}", response_model=schemas.EspecieRead)
-def actualizar_especie(especie_id: int, especie: schemas.EspecieCreate, db: Session = Depends(get_db)):
-    db_especie = crud.update_especie(db, especie_id=especie_id, especie=especie)
-    if not db_especie:
-        raise HTTPException(status_code=404, detail="Especie no encontrada")
-    return db_especie
+@app.put("/roles/{role_id}", response_model=schemas.RoleRead)
+def actualizar_role(role_id: int, role: schemas.RoleCreate, db: Session = Depends(get_db)):
+    db_role = crud.update_role(db, role_id=role_id, role=role)
+    if not db_role:
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
+    return db_role
 
-@app.delete("/especies/{especie_id}", status_code=204)
-def eliminar_especie(especie_id: int, db: Session = Depends(get_db)):
-    eliminado = crud.delete_especie(db, especie_id=especie_id)
+@app.delete("/roles/{role_id}", status_code=204)
+def eliminar_role(role_id: int, db: Session = Depends(get_db)):
+    eliminado = crud.delete_role(db, role_id=role_id)
     if not eliminado:
-        raise HTTPException(status_code=404, detail="Especie no encontrada")
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
     return
 
-# Rutas para Usuario
+# --- RUTAS PARA USUARIO ---
 @app.post("/usuarios/", response_model=schemas.UsuarioRead, status_code=201)
 def crear_usuario(usuario: schemas.UsuarioCreate, db: Session = Depends(get_db)):
     return crud.create_usuario(db=db, usuario=usuario)
@@ -145,11 +147,9 @@ def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return
 
-
-# Rutas para Arbol
+# --- RUTAS PARA ÁRBOL ---
 @app.post("/arboles/", response_model=schemas.ArbolRead, status_code=201)
 def crear_arbol(arbol: schemas.ArbolCreate, db: Session = Depends(get_db)):
-    # Validación: Si hay interferencia aérea, se deben especificar detalles.
     if arbol.interferencia_aerea and not arbol.especificaciones_interferencia:
         raise HTTPException(
             status_code=400,
@@ -170,7 +170,6 @@ def leer_arbol(arbol_id: int, db: Session = Depends(get_db)):
 
 @app.put("/arboles/{arbol_id}", response_model=schemas.ArbolRead)
 def actualizar_arbol(arbol_id: int, arbol: schemas.ArbolCreate, db: Session = Depends(get_db)):
-    # Validación: Si hay interferencia aérea, se deben especificar detalles.
     if arbol.interferencia_aerea and not arbol.especificaciones_interferencia:
         raise HTTPException(
             status_code=400,
@@ -188,9 +187,7 @@ def eliminar_arbol(arbol_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Árbol no encontrado")
     return
 
-
-
-# Rutas para Medicion
+# --- RUTAS PARA MEDICIÓN ---
 @app.post("/mediciones/", response_model=schemas.MedicionRead, status_code=201)
 def crear_medicion(medicion: schemas.MedicionCreate, db: Session = Depends(get_db)):
     if medicion.interferencia_aerea and not medicion.especificaciones_interferencia:
@@ -230,8 +227,7 @@ def eliminar_medicion(medicion_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Medición no encontrada")
     return
 
-
-# Rutas para Foto
+# --- RUTAS PARA FOTO ---
 @app.post("/fotos/", response_model=schemas.FotoRead, status_code=201)
 def crear_foto(foto: schemas.FotoCreate, db: Session = Depends(get_db)):
     try:
@@ -263,3 +259,4 @@ def eliminar_foto(foto_id: int, db: Session = Depends(get_db)):
     if not eliminado:
         raise HTTPException(status_code=404, detail="Foto no encontrada")
     return
+

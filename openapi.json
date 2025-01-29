@@ -2,8 +2,8 @@
     "openapi": "3.1.0",
     "info": {
         "title": "API REST - Gestión de Árboles",
-        "description": "API para gestionar información de árboles, municipios, especies, usuarios, y más.",
-        "version": "1.0.0"
+        "description": "API para gestionar información de árboles, municipios, especies, usuarios, mediciones y más.",
+        "version": "2.0.0"
     },
     "paths": {
         "/provincias/": {
@@ -418,16 +418,16 @@
                 }
             }
         },
-        "/especies/": {
+        "/roles/": {
             "post": {
-                "summary": "Crear Especie",
-                "operationId": "crear_especie_especies__post",
+                "summary": "Crear Role",
+                "operationId": "crear_role_roles__post",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EspecieCreate"
+                                "$ref": "#/components/schemas/RoleCreate"
                             }
                         }
                     }
@@ -438,7 +438,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/EspecieRead"
+                                    "$ref": "#/components/schemas/RoleRead"
                                 }
                             }
                         }
@@ -456,8 +456,8 @@
                 }
             },
             "get": {
-                "summary": "Leer Especies",
-                "operationId": "leer_especies_especies__get",
+                "summary": "Leer Roles",
+                "operationId": "leer_roles_roles__get",
                 "parameters": [
                     {
                         "name": "skip",
@@ -488,9 +488,9 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/EspecieRead"
+                                        "$ref": "#/components/schemas/RoleRead"
                                     },
-                                    "title": "Response Leer Especies Especies  Get"
+                                    "title": "Response Leer Roles Roles  Get"
                                 }
                             }
                         }
@@ -508,18 +508,18 @@
                 }
             }
         },
-        "/especies/{especie_id}": {
+        "/roles/{role_id}": {
             "get": {
-                "summary": "Leer Especie",
-                "operationId": "leer_especie_especies__especie_id__get",
+                "summary": "Leer Role",
+                "operationId": "leer_role_roles__role_id__get",
                 "parameters": [
                     {
-                        "name": "especie_id",
+                        "name": "role_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "title": "Especie Id"
+                            "title": "Role Id"
                         }
                     }
                 ],
@@ -529,7 +529,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/EspecieRead"
+                                    "$ref": "#/components/schemas/RoleRead"
                                 }
                             }
                         }
@@ -547,16 +547,16 @@
                 }
             },
             "put": {
-                "summary": "Actualizar Especie",
-                "operationId": "actualizar_especie_especies__especie_id__put",
+                "summary": "Actualizar Role",
+                "operationId": "actualizar_role_roles__role_id__put",
                 "parameters": [
                     {
-                        "name": "especie_id",
+                        "name": "role_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "title": "Especie Id"
+                            "title": "Role Id"
                         }
                     }
                 ],
@@ -565,7 +565,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EspecieCreate"
+                                "$ref": "#/components/schemas/RoleCreate"
                             }
                         }
                     }
@@ -576,7 +576,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/EspecieRead"
+                                    "$ref": "#/components/schemas/RoleRead"
                                 }
                             }
                         }
@@ -594,16 +594,16 @@
                 }
             },
             "delete": {
-                "summary": "Eliminar Especie",
-                "operationId": "eliminar_especie_especies__especie_id__delete",
+                "summary": "Eliminar Role",
+                "operationId": "eliminar_role_roles__role_id__delete",
                 "parameters": [
                     {
-                        "name": "especie_id",
+                        "name": "role_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "title": "Especie Id"
+                            "title": "Role Id"
                         }
                     }
                 ],
@@ -1451,6 +1451,25 @@
     },
     "components": {
         "schemas": {
+            "AlturaEnum": {
+                "type": "string",
+                "enum": [
+                    "1-2 m",
+                    ">3 m",
+                    "3-5 m",
+                    "> 5m"
+                ],
+                "title": "AlturaEnum"
+            },
+            "AmbitoEnum": {
+                "type": "string",
+                "enum": [
+                    "Urbano",
+                    "Rural",
+                    "Otro"
+                ],
+                "title": "AmbitoEnum"
+            },
             "ArbolCreate": {
                 "properties": {
                     "id_especie": {
@@ -1461,16 +1480,27 @@
                         "type": "integer",
                         "title": "Id Municipio"
                     },
-                    "ubicacion": {
+                    "latitude": {
                         "anyOf": [
                             {
-                                "type": "string"
+                                "type": "number"
                             },
                             {
                                 "type": "null"
                             }
                         ],
-                        "title": "Ubicacion"
+                        "title": "Latitude"
+                    },
+                    "longitude": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Longitude"
                     },
                     "calle": {
                         "anyOf": [
@@ -1516,71 +1546,47 @@
                         ],
                         "title": "Barrio"
                     },
-                    "id_altura": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Altura"
+                    "altura": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_diametro": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Diametro"
+                    "diametro_tronco": {
+                        "$ref": "#/components/schemas/DiametroTroncoEnum"
                     },
-                    "id_estado_copa": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Copa"
+                    "ambito": {
+                        "$ref": "#/components/schemas/AmbitoEnum"
                     },
-                    "id_estado_tronco": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Tronco"
+                    "distancia_entre_ejemplares": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_estado_base": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Base"
+                    "distancia_al_cordon": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_condicion": {
+                    "interferencia_aerea": {
+                        "$ref": "#/components/schemas/InterferenciaAereaEnum"
+                    },
+                    "tipo_cable": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "$ref": "#/components/schemas/TipoCableEnum"
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "title": "Id Condicion"
+                        ]
+                    },
+                    "requiere_intervencion": {
+                        "type": "boolean",
+                        "title": "Requiere Intervencion"
+                    },
+                    "tipo_intervencion": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/TipoIntervencionEnum"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
                     },
                     "tratamiento_previo": {
                         "anyOf": [
@@ -1604,40 +1610,9 @@
                         ],
                         "title": "Cazuela"
                     },
-                    "requiere_tratamiento": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Requiere Tratamiento",
-                        "default": false
-                    },
-                    "ambito": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ambito"
-                    },
                     "protegido": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Protegido",
-                        "default": false
+                        "type": "boolean",
+                        "title": "Protegido"
                     },
                     "fecha_censo": {
                         "anyOf": [
@@ -1661,112 +1636,20 @@
                             }
                         ],
                         "title": "Id Usuario"
-                    },
-                    "interferencias": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Interferencias"
-                    },
-                    "detalles_arbol": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Detalles Arbol"
-                    },
-                    "absorcion_co2": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Absorcion Co2"
-                    },
-                    "edad": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Edad"
-                    },
-                    "distancia_otros_ejemplares": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Distancia Otros Ejemplares"
-                    },
-                    "distancia_cordon": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Distancia Cordon"
-                    },
-                    "ancho_vereda": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ancho Vereda"
-                    },
-                    "interferencia_aerea": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Interferencia Aerea",
-                        "default": false
-                    },
-                    "especificaciones_interferencia": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Especificaciones Interferencia"
                     }
                 },
                 "type": "object",
                 "required": [
                     "id_especie",
-                    "id_municipio"
+                    "id_municipio",
+                    "altura",
+                    "diametro_tronco",
+                    "ambito",
+                    "distancia_entre_ejemplares",
+                    "distancia_al_cordon",
+                    "interferencia_aerea",
+                    "requiere_intervencion",
+                    "protegido"
                 ],
                 "title": "ArbolCreate"
             },
@@ -1780,16 +1663,27 @@
                         "type": "integer",
                         "title": "Id Municipio"
                     },
-                    "ubicacion": {
+                    "latitude": {
                         "anyOf": [
                             {
-                                "type": "string"
+                                "type": "number"
                             },
                             {
                                 "type": "null"
                             }
                         ],
-                        "title": "Ubicacion"
+                        "title": "Latitude"
+                    },
+                    "longitude": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Longitude"
                     },
                     "calle": {
                         "anyOf": [
@@ -1835,71 +1729,47 @@
                         ],
                         "title": "Barrio"
                     },
-                    "id_altura": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Altura"
+                    "altura": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_diametro": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Diametro"
+                    "diametro_tronco": {
+                        "$ref": "#/components/schemas/DiametroTroncoEnum"
                     },
-                    "id_estado_copa": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Copa"
+                    "ambito": {
+                        "$ref": "#/components/schemas/AmbitoEnum"
                     },
-                    "id_estado_tronco": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Tronco"
+                    "distancia_entre_ejemplares": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_estado_base": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Base"
+                    "distancia_al_cordon": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_condicion": {
+                    "interferencia_aerea": {
+                        "$ref": "#/components/schemas/InterferenciaAereaEnum"
+                    },
+                    "tipo_cable": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "$ref": "#/components/schemas/TipoCableEnum"
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "title": "Id Condicion"
+                        ]
+                    },
+                    "requiere_intervencion": {
+                        "type": "boolean",
+                        "title": "Requiere Intervencion"
+                    },
+                    "tipo_intervencion": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/TipoIntervencionEnum"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
                     },
                     "tratamiento_previo": {
                         "anyOf": [
@@ -1923,40 +1793,9 @@
                         ],
                         "title": "Cazuela"
                     },
-                    "requiere_tratamiento": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Requiere Tratamiento",
-                        "default": false
-                    },
-                    "ambito": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ambito"
-                    },
                     "protegido": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Protegido",
-                        "default": false
+                        "type": "boolean",
+                        "title": "Protegido"
                     },
                     "fecha_censo": {
                         "anyOf": [
@@ -1981,106 +1820,6 @@
                         ],
                         "title": "Id Usuario"
                     },
-                    "interferencias": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Interferencias"
-                    },
-                    "detalles_arbol": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Detalles Arbol"
-                    },
-                    "absorcion_co2": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Absorcion Co2"
-                    },
-                    "edad": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Edad"
-                    },
-                    "distancia_otros_ejemplares": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Distancia Otros Ejemplares"
-                    },
-                    "distancia_cordon": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Distancia Cordon"
-                    },
-                    "ancho_vereda": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ancho Vereda"
-                    },
-                    "interferencia_aerea": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Interferencia Aerea",
-                        "default": false
-                    },
-                    "especificaciones_interferencia": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Especificaciones Interferencia"
-                    },
                     "id_arbol": {
                         "type": "integer",
                         "title": "Id Arbol"
@@ -2090,60 +1829,27 @@
                 "required": [
                     "id_especie",
                     "id_municipio",
+                    "altura",
+                    "diametro_tronco",
+                    "ambito",
+                    "distancia_entre_ejemplares",
+                    "distancia_al_cordon",
+                    "interferencia_aerea",
+                    "requiere_intervencion",
+                    "protegido",
                     "id_arbol"
                 ],
                 "title": "ArbolRead"
             },
-            "EspecieCreate": {
-                "properties": {
-                    "nombre_cientifico": {
-                        "type": "string",
-                        "title": "Nombre Cientifico"
-                    },
-                    "nombre_comun": {
-                        "type": "string",
-                        "title": "Nombre Comun"
-                    },
-                    "origen": {
-                        "type": "string",
-                        "title": "Origen"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "nombre_cientifico",
-                    "nombre_comun",
-                    "origen"
+            "DiametroTroncoEnum": {
+                "type": "string",
+                "enum": [
+                    "1-5 cm",
+                    "5-15 cm",
+                    "> 15 cm",
+                    "Especificar"
                 ],
-                "title": "EspecieCreate"
-            },
-            "EspecieRead": {
-                "properties": {
-                    "nombre_cientifico": {
-                        "type": "string",
-                        "title": "Nombre Cientifico"
-                    },
-                    "nombre_comun": {
-                        "type": "string",
-                        "title": "Nombre Comun"
-                    },
-                    "origen": {
-                        "type": "string",
-                        "title": "Origen"
-                    },
-                    "id_especie": {
-                        "type": "integer",
-                        "title": "Id Especie"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "nombre_cientifico",
-                    "nombre_comun",
-                    "origen",
-                    "id_especie"
-                ],
-                "title": "EspecieRead"
+                "title": "DiametroTroncoEnum"
             },
             "FotoCreate": {
                 "properties": {
@@ -2209,6 +1915,15 @@
                 "type": "object",
                 "title": "HTTPValidationError"
             },
+            "InterferenciaAereaEnum": {
+                "type": "string",
+                "enum": [
+                    "Línea alta",
+                    "Iluminaria y media",
+                    "Baja"
+                ],
+                "title": "InterferenciaAereaEnum"
+            },
             "MedicionCreate": {
                 "properties": {
                     "id_arbol": {
@@ -2227,115 +1942,69 @@
                         ],
                         "title": "Fecha Medicion"
                     },
-                    "id_altura": {
+                    "latitude": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "number"
                             },
                             {
                                 "type": "null"
                             }
                         ],
-                        "title": "Id Altura"
+                        "title": "Latitude"
                     },
-                    "id_diametro": {
+                    "longitude": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "number"
                             },
                             {
                                 "type": "null"
                             }
                         ],
-                        "title": "Id Diametro"
+                        "title": "Longitude"
                     },
-                    "ubicacion": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ubicacion"
+                    "altura": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "calle": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Calle"
+                    "diametro_tronco": {
+                        "$ref": "#/components/schemas/DiametroTroncoEnum"
                     },
-                    "numero_aprox": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Numero Aprox"
+                    "ambito": {
+                        "$ref": "#/components/schemas/AmbitoEnum"
                     },
-                    "barrio": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Barrio"
+                    "distancia_entre_ejemplares": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_estado_copa": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Copa"
+                    "distancia_al_cordon": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_estado_tronco": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Tronco"
+                    "interferencia_aerea": {
+                        "$ref": "#/components/schemas/InterferenciaAereaEnum"
                     },
-                    "id_estado_base": {
+                    "tipo_cable": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "$ref": "#/components/schemas/TipoCableEnum"
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "title": "Id Estado Base"
+                        ]
                     },
-                    "id_condicion": {
+                    "requiere_intervencion": {
+                        "type": "boolean",
+                        "title": "Requiere Intervencion"
+                    },
+                    "tipo_intervencion": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "$ref": "#/components/schemas/TipoIntervencionEnum"
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "title": "Id Condicion"
+                        ]
                     },
                     "tratamiento_previo": {
                         "anyOf": [
@@ -2359,40 +2028,9 @@
                         ],
                         "title": "Cazuela"
                     },
-                    "requiere_tratamiento": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Requiere Tratamiento",
-                        "default": false
-                    },
-                    "ambito": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ambito"
-                    },
                     "protegido": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Protegido",
-                        "default": false
+                        "type": "boolean",
+                        "title": "Protegido"
                     },
                     "id_usuario": {
                         "anyOf": [
@@ -2404,123 +2042,19 @@
                             }
                         ],
                         "title": "Id Usuario"
-                    },
-                    "interferencias": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Interferencias"
-                    },
-                    "detalles_arbol": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Detalles Arbol"
-                    },
-                    "absorcion_co2": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Absorcion Co2"
-                    },
-                    "edad": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Edad"
-                    },
-                    "tipo_dano": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Tipo Dano"
-                    },
-                    "intervencion_programada": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Intervencion Programada",
-                        "default": false
-                    },
-                    "imagen_dano": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Imagen Dano"
-                    },
-                    "ancho_vereda": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ancho Vereda"
-                    },
-                    "interferencia_aerea": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Interferencia Aerea",
-                        "default": false
-                    },
-                    "especificaciones_interferencia": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Especificaciones Interferencia"
                     }
                 },
                 "type": "object",
                 "required": [
-                    "id_arbol"
+                    "id_arbol",
+                    "altura",
+                    "diametro_tronco",
+                    "ambito",
+                    "distancia_entre_ejemplares",
+                    "distancia_al_cordon",
+                    "interferencia_aerea",
+                    "requiere_intervencion",
+                    "protegido"
                 ],
                 "title": "MedicionCreate"
             },
@@ -2542,115 +2076,69 @@
                         ],
                         "title": "Fecha Medicion"
                     },
-                    "id_altura": {
+                    "latitude": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "number"
                             },
                             {
                                 "type": "null"
                             }
                         ],
-                        "title": "Id Altura"
+                        "title": "Latitude"
                     },
-                    "id_diametro": {
+                    "longitude": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "type": "number"
                             },
                             {
                                 "type": "null"
                             }
                         ],
-                        "title": "Id Diametro"
+                        "title": "Longitude"
                     },
-                    "ubicacion": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ubicacion"
+                    "altura": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "calle": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Calle"
+                    "diametro_tronco": {
+                        "$ref": "#/components/schemas/DiametroTroncoEnum"
                     },
-                    "numero_aprox": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Numero Aprox"
+                    "ambito": {
+                        "$ref": "#/components/schemas/AmbitoEnum"
                     },
-                    "barrio": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Barrio"
+                    "distancia_entre_ejemplares": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_estado_copa": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Copa"
+                    "distancia_al_cordon": {
+                        "$ref": "#/components/schemas/AlturaEnum"
                     },
-                    "id_estado_tronco": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Id Estado Tronco"
+                    "interferencia_aerea": {
+                        "$ref": "#/components/schemas/InterferenciaAereaEnum"
                     },
-                    "id_estado_base": {
+                    "tipo_cable": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "$ref": "#/components/schemas/TipoCableEnum"
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "title": "Id Estado Base"
+                        ]
                     },
-                    "id_condicion": {
+                    "requiere_intervencion": {
+                        "type": "boolean",
+                        "title": "Requiere Intervencion"
+                    },
+                    "tipo_intervencion": {
                         "anyOf": [
                             {
-                                "type": "integer"
+                                "$ref": "#/components/schemas/TipoIntervencionEnum"
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "title": "Id Condicion"
+                        ]
                     },
                     "tratamiento_previo": {
                         "anyOf": [
@@ -2674,40 +2162,9 @@
                         ],
                         "title": "Cazuela"
                     },
-                    "requiere_tratamiento": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Requiere Tratamiento",
-                        "default": false
-                    },
-                    "ambito": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ambito"
-                    },
                     "protegido": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Protegido",
-                        "default": false
+                        "type": "boolean",
+                        "title": "Protegido"
                     },
                     "id_usuario": {
                         "anyOf": [
@@ -2720,118 +2177,6 @@
                         ],
                         "title": "Id Usuario"
                     },
-                    "interferencias": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Interferencias"
-                    },
-                    "detalles_arbol": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Detalles Arbol"
-                    },
-                    "absorcion_co2": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Absorcion Co2"
-                    },
-                    "edad": {
-                        "anyOf": [
-                            {
-                                "type": "integer"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Edad"
-                    },
-                    "tipo_dano": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Tipo Dano"
-                    },
-                    "intervencion_programada": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Intervencion Programada",
-                        "default": false
-                    },
-                    "imagen_dano": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Imagen Dano"
-                    },
-                    "ancho_vereda": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ancho Vereda"
-                    },
-                    "interferencia_aerea": {
-                        "anyOf": [
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Interferencia Aerea",
-                        "default": false
-                    },
-                    "especificaciones_interferencia": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Especificaciones Interferencia"
-                    },
                     "id_medicion": {
                         "type": "integer",
                         "title": "Id Medicion"
@@ -2840,6 +2185,14 @@
                 "type": "object",
                 "required": [
                     "id_arbol",
+                    "altura",
+                    "diametro_tronco",
+                    "ambito",
+                    "distancia_entre_ejemplares",
+                    "distancia_al_cordon",
+                    "interferencia_aerea",
+                    "requiere_intervencion",
+                    "protegido",
                     "id_medicion"
                 ],
                 "title": "MedicionRead"
@@ -2854,7 +2207,7 @@
                         "type": "string",
                         "title": "Nombre"
                     },
-                    "latitud": {
+                    "latitude": {
                         "anyOf": [
                             {
                                 "type": "number"
@@ -2863,9 +2216,9 @@
                                 "type": "null"
                             }
                         ],
-                        "title": "Latitud"
+                        "title": "Latitude"
                     },
-                    "longitud": {
+                    "longitude": {
                         "anyOf": [
                             {
                                 "type": "number"
@@ -2874,7 +2227,7 @@
                                 "type": "null"
                             }
                         ],
-                        "title": "Longitud"
+                        "title": "Longitude"
                     }
                 },
                 "type": "object",
@@ -2894,7 +2247,7 @@
                         "type": "string",
                         "title": "Nombre"
                     },
-                    "latitud": {
+                    "latitude": {
                         "anyOf": [
                             {
                                 "type": "number"
@@ -2903,9 +2256,9 @@
                                 "type": "null"
                             }
                         ],
-                        "title": "Latitud"
+                        "title": "Latitude"
                     },
-                    "longitud": {
+                    "longitude": {
                         "anyOf": [
                             {
                                 "type": "number"
@@ -2914,7 +2267,7 @@
                                 "type": "null"
                             }
                         ],
-                        "title": "Longitud"
+                        "title": "Longitude"
                     },
                     "id_municipio": {
                         "type": "integer",
@@ -2959,6 +2312,176 @@
                     "id_provincia"
                 ],
                 "title": "ProvinciaRead"
+            },
+            "RoleCreate": {
+                "properties": {
+                    "role_name": {
+                        "type": "string",
+                        "title": "Role Name"
+                    },
+                    "can_manage_users": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Manage Users",
+                        "default": false
+                    },
+                    "can_manage_all_relevamientos": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Manage All Relevamientos",
+                        "default": false
+                    },
+                    "can_create_relevamientos": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Create Relevamientos",
+                        "default": false
+                    },
+                    "can_modify_own_relevamientos": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Modify Own Relevamientos",
+                        "default": false
+                    },
+                    "can_generate_reports": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Generate Reports",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "role_name"
+                ],
+                "title": "RoleCreate"
+            },
+            "RoleRead": {
+                "properties": {
+                    "role_name": {
+                        "type": "string",
+                        "title": "Role Name"
+                    },
+                    "can_manage_users": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Manage Users",
+                        "default": false
+                    },
+                    "can_manage_all_relevamientos": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Manage All Relevamientos",
+                        "default": false
+                    },
+                    "can_create_relevamientos": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Create Relevamientos",
+                        "default": false
+                    },
+                    "can_modify_own_relevamientos": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Modify Own Relevamientos",
+                        "default": false
+                    },
+                    "can_generate_reports": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Can Generate Reports",
+                        "default": false
+                    },
+                    "id_role": {
+                        "type": "integer",
+                        "title": "Id Role"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "role_name",
+                    "id_role"
+                ],
+                "title": "RoleRead"
+            },
+            "TipoCableEnum": {
+                "type": "string",
+                "enum": [
+                    "Preensamblado",
+                    "Cable desnudo"
+                ],
+                "title": "TipoCableEnum"
+            },
+            "TipoIntervencionEnum": {
+                "type": "string",
+                "enum": [
+                    "Poda de altura",
+                    "Poda de formación",
+                    "Poda de aclareo",
+                    "Raleo",
+                    "Aplicación de fungicida"
+                ],
+                "title": "TipoIntervencionEnum"
             },
             "UsuarioCreate": {
                 "properties": {

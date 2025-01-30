@@ -1,157 +1,116 @@
-# FastAPI - Gestión de Árboles Urbanos
 
-Este proyecto es una **API REST** para la gestión de árboles urbanos, diseñada utilizando **FastAPI**. La API permite gestionar provincias, municipios, especies de árboles, usuarios y realizar operaciones relacionadas con árboles, mediciones y fotos.
+## Endpoints Principales
 
----
+- `/provincias/`: CRUD para provincias
+- `/municipios/`: CRUD para municipios
+- `/roles/`: CRUD para roles de usuario
+- `/usuarios/`: CRUD para usuarios
+- `/arboles/`: CRUD para árboles
+- `/mediciones/`: CRUD para mediciones de árboles
+- `/fotos/`: CRUD para fotos de árboles
 
-## Características
+Para más detalles sobre los endpoints y sus parámetros, consulta la documentación Swagger o ReDoc.
 
-- **Framework**: FastAPI
-- **ORM**: SQLAlchemy
-- **Migraciones de base de datos**: Alembic
-- **Soporte para desarrollo local y despliegue en producción.**
-- **Rutas CRUD completas** para todas las entidades del modelo.
-- **Validación de datos** y documentación automática mediante Pydantic.
-- **Servidor ASGI** utilizando Uvicorn.
+## Modelos de Datos
 
----
+### Provincia
+- `id_provincia`: int
+- `nombre`: str
 
-## Requisitos Previos
+### Municipio
+- `id_municipio`: int
+- `id_provincia`: int
+- `nombre`: str
+- `latitude`: float (opcional)
+- `longitude`: float (opcional)
 
-- **Python**: Versión 3.8 o superior.
-- **Base de datos**: PostgreSQL (recomendado para producción), SQLite (para desarrollo local).
-- **Entorno virtual**: Se recomienda utilizar `venv` o `virtualenv`.
-- **Herramientas de Migración**: Alembic.
+### Role
+- `id_role`: int
+- `role_name`: str
+- `can_manage_users`: bool
+- `can_manage_all_relevamientos`: bool
+- `can_create_relevamientos`: bool
+- `can_modify_own_relevamientos`: bool
+- `can_generate_reports`: bool
 
----
+### Usuario
+- `id_usuario`: int
+- `id_municipio`: int
+- `id_role`: int
+- `nombre`: str
+- `email`: str
+- `hashed_password`: str
+- `is_active`: bool
+- `is_superuser`: bool
+- `date_joined`: date
+- `created_by`: int (opcional)
 
-## Instalación
+### Arbol
+- `id_arbol`: int
+- `id_especie`: int
+- `id_municipio`: int
+- `latitude`: float (opcional)
+- `longitude`: float (opcional)
+- `calle`: str (opcional)
+- `numero_aprox`: int (opcional)
+- `identificacion`: str (opcional)
+- `barrio`: str (opcional)
+- `altura`: str
+- `diametro_tronco`: str
+- `ambito`: str
+- `distancia_entre_ejemplares`: str
+- `distancia_al_cordon`: str
+- `interferencia_aerea`: str
+- `tipo_cable`: str (opcional)
+- `requiere_intervencion`: bool
+- `tipo_intervencion`: str (opcional)
+- `tratamiento_previo`: str (opcional)
+- `cazuela`: str (opcional)
+- `protegido`: bool
+- `fecha_censo`: date (opcional)
+- `id_usuario`: int (opcional)
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/CristobalHenriquez/FastApi.git
-   cd FastApi
-   ```
+### Medicion
+- `id_medicion`: int
+- `id_arbol`: int
+- `fecha_medicion`: date (opcional)
+- `latitude`: float (opcional)
+- `longitude`: float (opcional)
+- `altura`: str
+- `diametro_tronco`: str
+- `ambito`: str
+- `distancia_entre_ejemplares`: str
+- `distancia_al_cordon`: str
+- `interferencia_aerea`: str
+- `tipo_cable`: str (opcional)
+- `requiere_intervencion`: bool
+- `tipo_intervencion`: str (opcional)
+- `tratamiento_previo`: str (opcional)
+- `cazuela`: str (opcional)
+- `protegido`: bool
+- `id_usuario`: int (opcional)
 
-2. **Configurar el entorno virtual:**
-   ```bash
-   python3 -m venv env
-   source env/bin/activate  # macOS/Linux
-   .\env\Scripts\activate   # Windows
-   ```
+### Foto
+- `id_foto`: int
+- `id_medicion`: int
+- `tipo_foto`: str
+- `ruta_foto`: str
 
-3. **Instalar dependencias:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Autenticación
 
-4. **Configurar las variables de entorno:** Crear un archivo .env en la raíz del proyecto con las siguientes variables:
-   ```env
-   DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/nombre_base_datos
-   ```
+La API utiliza autenticación basada en JWT. Para obtener un token, utiliza el endpoint `/token` con las credenciales de usuario.
 
-5. **Iniciar las migraciones:**
-   ```bash
-   alembic upgrade head
-   ```
+## Desarrollo
 
-6. **Iniciar el servidor local:**
-   ```bash
-   uvicorn app.main:app --reload
-   ```
+Para contribuir al proyecto:
 
-7. **Probar la API:**
-   - Documentación interactiva: http://127.0.0.1:8000/docs
-   - Documentación alternativa: http://127.0.0.1:8000/redoc
+1. Crea una rama para tu feature: `git checkout -b feature/AmazingFeature`
+2. Realiza tus cambios y haz commit: `git commit -m 'Add some AmazingFeature'`
+3. Push a la rama: `git push origin feature/AmazingFeature`
+4. Abre un Pull Request
 
-## Estructura del Proyecto
+## Solución de Problemas
 
-```
-FastAPI/
-├── alembic/                # Configuración y migraciones de Alembic
-│   ├── env.py              # Configuración de migraciones
-│   └── versions/           # Archivos de migraciones generados
-├── app/                    # Código principal de la aplicación
-│   ├── __init__.py
-│   ├── crud.py             # Funciones CRUD para las entidades
-│   ├── database.py         # Configuración de la base de datos
-│   ├── main.py             # Punto de entrada de la aplicación
-│   ├── models.py           # Definición de modelos SQLAlchemy
-│   └── schemas.py          # Validación de datos con Pydantic
-├── .env                    # Variables de entorno (no incluir en el repositorio)
-├── .gitignore              # Archivos y carpetas ignorados por Git
-├── requirements.txt        # Dependencias del proyecto
-└── README.md               # Documentación del proyecto
-```
+Si encuentras problemas al iniciar el servicio de PostgreSQL o al conectarte a la base de datos, sigue estos pasos:
 
-## Rutas Disponibles
-
-### Provincias
-- GET /provincias/ - Listar todas las provincias.
-- POST /provincias/ - Crear una nueva provincia.
-- GET /provincias/{id} - Obtener una provincia específica.
-- PUT /provincias/{id} - Actualizar una provincia existente.
-- DELETE /provincias/{id} - Eliminar una provincia.
-
-### Municipios
-- GET /municipios/ - Listar todos los municipios.
-- POST /municipios/ - Crear un nuevo municipio.
-- GET /municipios/{id} - Obtener un municipio específico.
-- PUT /municipios/{id} - Actualizar un municipio existente.
-- DELETE /municipios/{id} - Eliminar un municipio.
-
-### Especies
-- GET /especies/ - Listar todas las especies.
-- POST /especies/ - Crear una nueva especie.
-- GET /especies/{id} - Obtener una especie específica.
-- PUT /especies/{id} - Actualizar una especie existente.
-- DELETE /especies/{id} - Eliminar una especie.
-
-### Usuarios
-- GET /usuarios/ - Listar todos los usuarios.
-- POST /usuarios/ - Crear un nuevo usuario.
-- GET /usuarios/{id} - Obtener un usuario específico.
-- PUT /usuarios/{id} - Actualizar un usuario existente.
-- DELETE /usuarios/{id} - Eliminar un usuario.
-
-### Árboles
-- GET /arboles/ - Listar todos los árboles.
-- POST /arboles/ - Crear un nuevo árbol.
-- GET /arboles/{id} - Obtener un árbol específico.
-- PUT /arboles/{id} - Actualizar un árbol existente.
-- DELETE /arboles/{id} - Eliminar un árbol.
-
-### Mediciones
-- GET /mediciones/ - Listar todas las mediciones.
-- POST /mediciones/ - Crear una nueva medición.
-- GET /mediciones/{id} - Obtener una medición específica.
-- PUT /mediciones/{id} - Actualizar una medición existente.
-- DELETE /mediciones/{id} - Eliminar una medición.
-
-### Fotos
-- GET /fotos/ - Listar todas las fotos.
-- POST /fotos/ - Crear una nueva foto.
-- GET /fotos/{id} - Obtener una foto específica.
-- PUT /fotos/{id} - Actualizar una foto existente.
-- DELETE /fotos/{id} - Eliminar una foto.
-
-## Despliegue
-
-### Preparación
-1. Crear una cuenta en Render.com o Heroku.
-2. Configurar la base de datos de producción.
-
-### Pasos para Desplegar
-1. Subir el código a GitHub.
-2. Conectar el repositorio a Render o Heroku.
-3. Configurar las variables de entorno:
-   ```env
-   DATABASE_URL=postgresql://usuario:contraseña@host:puerto/dbname
-   ```
-4. Realizar migraciones en el entorno de producción:
-   ```bash
-   alembic upgrade head
-   ```
-5. Iniciar la aplicación y probar las rutas.
-
-## Licencia
+1. Verifica el estado del servicio:

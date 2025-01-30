@@ -1451,25 +1451,6 @@
     },
     "components": {
         "schemas": {
-            "AlturaEnum": {
-                "type": "string",
-                "enum": [
-                    "1-2 m",
-                    ">3 m",
-                    "3-5 m",
-                    "> 5m"
-                ],
-                "title": "AlturaEnum"
-            },
-            "AmbitoEnum": {
-                "type": "string",
-                "enum": [
-                    "Urbano",
-                    "Rural",
-                    "Otro"
-                ],
-                "title": "AmbitoEnum"
-            },
             "ArbolCreate": {
                 "properties": {
                     "id_especie": {
@@ -1547,32 +1528,44 @@
                         "title": "Barrio"
                     },
                     "altura": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "pattern": "^(1-2 m|>3 m|3-5 m|> 5m)$",
+                        "title": "Altura"
                     },
                     "diametro_tronco": {
-                        "$ref": "#/components/schemas/DiametroTroncoEnum"
+                        "type": "string",
+                        "pattern": "^(1-5 cm|5-15 cm|> 15 cm|Especificar)$",
+                        "title": "Diametro Tronco"
                     },
                     "ambito": {
-                        "$ref": "#/components/schemas/AmbitoEnum"
+                        "type": "string",
+                        "pattern": "^(Urbano|Rural|Otro)$",
+                        "title": "Ambito"
                     },
                     "distancia_entre_ejemplares": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "title": "Distancia Entre Ejemplares"
                     },
                     "distancia_al_cordon": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "title": "Distancia Al Cordon"
                     },
                     "interferencia_aerea": {
-                        "$ref": "#/components/schemas/InterferenciaAereaEnum"
+                        "type": "string",
+                        "pattern": "^(Línea alta|Iluminaria y media|Baja)$",
+                        "title": "Interferencia Aerea"
                     },
                     "tipo_cable": {
                         "anyOf": [
                             {
-                                "$ref": "#/components/schemas/TipoCableEnum"
+                                "type": "string",
+                                "pattern": "^(Preensamblado|Cable desnudo)?$"
                             },
                             {
                                 "type": "null"
                             }
-                        ]
+                        ],
+                        "title": "Tipo Cable"
                     },
                     "requiere_intervencion": {
                         "type": "boolean",
@@ -1581,12 +1574,14 @@
                     "tipo_intervencion": {
                         "anyOf": [
                             {
-                                "$ref": "#/components/schemas/TipoIntervencionEnum"
+                                "type": "string",
+                                "pattern": "^(Poda de altura|Poda de formación|Poda de aclareo|Raleo|Aplicación de fungicida)?$"
                             },
                             {
                                 "type": "null"
                             }
-                        ]
+                        ],
+                        "title": "Tipo Intervencion"
                     },
                     "tratamiento_previo": {
                         "anyOf": [
@@ -1730,32 +1725,44 @@
                         "title": "Barrio"
                     },
                     "altura": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "pattern": "^(1-2 m|>3 m|3-5 m|> 5m)$",
+                        "title": "Altura"
                     },
                     "diametro_tronco": {
-                        "$ref": "#/components/schemas/DiametroTroncoEnum"
+                        "type": "string",
+                        "pattern": "^(1-5 cm|5-15 cm|> 15 cm|Especificar)$",
+                        "title": "Diametro Tronco"
                     },
                     "ambito": {
-                        "$ref": "#/components/schemas/AmbitoEnum"
+                        "type": "string",
+                        "pattern": "^(Urbano|Rural|Otro)$",
+                        "title": "Ambito"
                     },
                     "distancia_entre_ejemplares": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "title": "Distancia Entre Ejemplares"
                     },
                     "distancia_al_cordon": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "title": "Distancia Al Cordon"
                     },
                     "interferencia_aerea": {
-                        "$ref": "#/components/schemas/InterferenciaAereaEnum"
+                        "type": "string",
+                        "pattern": "^(Línea alta|Iluminaria y media|Baja)$",
+                        "title": "Interferencia Aerea"
                     },
                     "tipo_cable": {
                         "anyOf": [
                             {
-                                "$ref": "#/components/schemas/TipoCableEnum"
+                                "type": "string",
+                                "pattern": "^(Preensamblado|Cable desnudo)?$"
                             },
                             {
                                 "type": "null"
                             }
-                        ]
+                        ],
+                        "title": "Tipo Cable"
                     },
                     "requiere_intervencion": {
                         "type": "boolean",
@@ -1764,12 +1771,14 @@
                     "tipo_intervencion": {
                         "anyOf": [
                             {
-                                "$ref": "#/components/schemas/TipoIntervencionEnum"
+                                "type": "string",
+                                "pattern": "^(Poda de altura|Poda de formación|Poda de aclareo|Raleo|Aplicación de fungicida)?$"
                             },
                             {
                                 "type": "null"
                             }
-                        ]
+                        ],
+                        "title": "Tipo Intervencion"
                     },
                     "tratamiento_previo": {
                         "anyOf": [
@@ -1841,16 +1850,6 @@
                 ],
                 "title": "ArbolRead"
             },
-            "DiametroTroncoEnum": {
-                "type": "string",
-                "enum": [
-                    "1-5 cm",
-                    "5-15 cm",
-                    "> 15 cm",
-                    "Especificar"
-                ],
-                "title": "DiametroTroncoEnum"
-            },
             "FotoCreate": {
                 "properties": {
                     "id_medicion": {
@@ -1915,15 +1914,6 @@
                 "type": "object",
                 "title": "HTTPValidationError"
             },
-            "InterferenciaAereaEnum": {
-                "type": "string",
-                "enum": [
-                    "Línea alta",
-                    "Iluminaria y media",
-                    "Baja"
-                ],
-                "title": "InterferenciaAereaEnum"
-            },
             "MedicionCreate": {
                 "properties": {
                     "id_arbol": {
@@ -1965,32 +1955,44 @@
                         "title": "Longitude"
                     },
                     "altura": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "pattern": "^(1-2 m|>3 m|3-5 m|> 5m)$",
+                        "title": "Altura"
                     },
                     "diametro_tronco": {
-                        "$ref": "#/components/schemas/DiametroTroncoEnum"
+                        "type": "string",
+                        "pattern": "^(1-5 cm|5-15 cm|> 15 cm|Especificar)$",
+                        "title": "Diametro Tronco"
                     },
                     "ambito": {
-                        "$ref": "#/components/schemas/AmbitoEnum"
+                        "type": "string",
+                        "pattern": "^(Urbano|Rural|Otro)$",
+                        "title": "Ambito"
                     },
                     "distancia_entre_ejemplares": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "title": "Distancia Entre Ejemplares"
                     },
                     "distancia_al_cordon": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "title": "Distancia Al Cordon"
                     },
                     "interferencia_aerea": {
-                        "$ref": "#/components/schemas/InterferenciaAereaEnum"
+                        "type": "string",
+                        "pattern": "^(Línea alta|Iluminaria y media|Baja)$",
+                        "title": "Interferencia Aerea"
                     },
                     "tipo_cable": {
                         "anyOf": [
                             {
-                                "$ref": "#/components/schemas/TipoCableEnum"
+                                "type": "string",
+                                "pattern": "^(Preensamblado|Cable desnudo)?$"
                             },
                             {
                                 "type": "null"
                             }
-                        ]
+                        ],
+                        "title": "Tipo Cable"
                     },
                     "requiere_intervencion": {
                         "type": "boolean",
@@ -1999,12 +2001,14 @@
                     "tipo_intervencion": {
                         "anyOf": [
                             {
-                                "$ref": "#/components/schemas/TipoIntervencionEnum"
+                                "type": "string",
+                                "pattern": "^(Poda de altura|Poda de formación|Poda de aclareo|Raleo|Aplicación de fungicida)?$"
                             },
                             {
                                 "type": "null"
                             }
-                        ]
+                        ],
+                        "title": "Tipo Intervencion"
                     },
                     "tratamiento_previo": {
                         "anyOf": [
@@ -2099,32 +2103,44 @@
                         "title": "Longitude"
                     },
                     "altura": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "pattern": "^(1-2 m|>3 m|3-5 m|> 5m)$",
+                        "title": "Altura"
                     },
                     "diametro_tronco": {
-                        "$ref": "#/components/schemas/DiametroTroncoEnum"
+                        "type": "string",
+                        "pattern": "^(1-5 cm|5-15 cm|> 15 cm|Especificar)$",
+                        "title": "Diametro Tronco"
                     },
                     "ambito": {
-                        "$ref": "#/components/schemas/AmbitoEnum"
+                        "type": "string",
+                        "pattern": "^(Urbano|Rural|Otro)$",
+                        "title": "Ambito"
                     },
                     "distancia_entre_ejemplares": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "title": "Distancia Entre Ejemplares"
                     },
                     "distancia_al_cordon": {
-                        "$ref": "#/components/schemas/AlturaEnum"
+                        "type": "string",
+                        "title": "Distancia Al Cordon"
                     },
                     "interferencia_aerea": {
-                        "$ref": "#/components/schemas/InterferenciaAereaEnum"
+                        "type": "string",
+                        "pattern": "^(Línea alta|Iluminaria y media|Baja)$",
+                        "title": "Interferencia Aerea"
                     },
                     "tipo_cable": {
                         "anyOf": [
                             {
-                                "$ref": "#/components/schemas/TipoCableEnum"
+                                "type": "string",
+                                "pattern": "^(Preensamblado|Cable desnudo)?$"
                             },
                             {
                                 "type": "null"
                             }
-                        ]
+                        ],
+                        "title": "Tipo Cable"
                     },
                     "requiere_intervencion": {
                         "type": "boolean",
@@ -2133,12 +2149,14 @@
                     "tipo_intervencion": {
                         "anyOf": [
                             {
-                                "$ref": "#/components/schemas/TipoIntervencionEnum"
+                                "type": "string",
+                                "pattern": "^(Poda de altura|Poda de formación|Poda de aclareo|Raleo|Aplicación de fungicida)?$"
                             },
                             {
                                 "type": "null"
                             }
-                        ]
+                        ],
+                        "title": "Tipo Intervencion"
                     },
                     "tratamiento_previo": {
                         "anyOf": [
@@ -2464,25 +2482,6 @@
                 ],
                 "title": "RoleRead"
             },
-            "TipoCableEnum": {
-                "type": "string",
-                "enum": [
-                    "Preensamblado",
-                    "Cable desnudo"
-                ],
-                "title": "TipoCableEnum"
-            },
-            "TipoIntervencionEnum": {
-                "type": "string",
-                "enum": [
-                    "Poda de altura",
-                    "Poda de formación",
-                    "Poda de aclareo",
-                    "Raleo",
-                    "Aplicación de fungicida"
-                ],
-                "title": "TipoIntervencionEnum"
-            },
             "UsuarioCreate": {
                 "properties": {
                     "id_municipio": {
@@ -2501,6 +2500,10 @@
                         "type": "string",
                         "format": "email",
                         "title": "Email"
+                    },
+                    "hashed_password": {
+                        "type": "string",
+                        "title": "Hashed Password"
                     },
                     "is_active": {
                         "anyOf": [
@@ -2555,7 +2558,8 @@
                     "id_municipio",
                     "id_role",
                     "nombre",
-                    "email"
+                    "email",
+                    "hashed_password"
                 ],
                 "title": "UsuarioCreate"
             },
@@ -2577,6 +2581,10 @@
                         "type": "string",
                         "format": "email",
                         "title": "Email"
+                    },
+                    "hashed_password": {
+                        "type": "string",
+                        "title": "Hashed Password"
                     },
                     "is_active": {
                         "anyOf": [
@@ -2636,6 +2644,7 @@
                     "id_role",
                     "nombre",
                     "email",
+                    "hashed_password",
                     "id_usuario"
                 ],
                 "title": "UsuarioRead"

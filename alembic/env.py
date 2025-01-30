@@ -1,16 +1,20 @@
+import os
+import sys
 from logging.config import fileConfig
+
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
+
 from alembic import context
-import os
 from dotenv import load_dotenv
-from app.database import Base  # Asegúrate de importar Base desde tu proyecto FastAPI
-import app.models  # Asegúrate de importar tus modelos
+
+# Añadir el directorio raíz del proyecto al sys.path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Cargar variables del archivo .env
 load_dotenv()
 
-# Cargar configuración de Alembic
+# Esto es parte de la configuración de Alembic, déjalo como está
 config = context.config
 
 # Leer la URL desde las variables de entorno
@@ -24,13 +28,22 @@ config.set_main_option("sqlalchemy.url", database_url)
 # Configuración del logger
 fileConfig(config.config_file_name)
 
+# Importar Base y los modelos
+from app.database import Base
+import app.models
+
 # MetaData para 'autogenerate'
 target_metadata = Base.metadata
 
 def run_migrations_offline():
     """Ejecuta las migraciones en modo offline."""
     url = config.get_main_option("sqlalchemy.url")
-    context.configure(url=url, target_metadata=target_metadata, literal_binds=True)
+    context.configure(
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
 
     with context.begin_transaction():
         context.run_migrations()
@@ -44,7 +57,10 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata
+        )
 
         with context.begin_transaction():
             context.run_migrations()

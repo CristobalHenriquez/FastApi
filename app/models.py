@@ -64,12 +64,11 @@ class Role(Base):
 class Usuario(Base):
     __tablename__ = "usuario"
 
-    id_usuario = Column(Integer, primary_key=True, index=True, ondelete="CASCADE")
+    id_usuario = Column(Integer, primary_key=True, index=True)
     id_municipio = Column(Integer, ForeignKey("municipio.id_municipio", ondelete="CASCADE"), nullable=False)
     id_role = Column(Integer, ForeignKey("role.id_role", ondelete="CASCADE"), nullable=False)
     nombre = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False, index=True)
-    hashed_password = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)  # 🔹 Se agrega para manejar autenticación
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
@@ -89,6 +88,7 @@ class Arbol(Base):
     __tablename__ = "arbol"
 
     id_arbol = Column(Integer, primary_key=True, index=True)
+    id_usuario = Column(Integer, ForeignKey("usuarios.id_usuario", ondelete="CASCADE"))
     id_especie = Column(Integer, ForeignKey("especie.id_especie", ondelete="CASCADE"), nullable=False)
     id_municipio = Column(Integer, ForeignKey("municipio.id_municipio", ondelete="CASCADE"), nullable=False)
     latitude = Column(Float, nullable=False)
@@ -123,10 +123,6 @@ class Arbol(Base):
         CheckConstraint("diametro_tronco IN ('1-5 cm', '5-15 cm', '> 15 cm', 'Especificar')"),
         CheckConstraint("ambito IN ('Urbano', 'Rural', 'Otro')"),
         CheckConstraint("interferencia_aerea IN ('Línea alta', 'Iluminaria y media', 'Baja')"),
-
-    CheckConstraint("tipo_cable IN ('Preensamblado', 'Cable desnudo')"),
-    CheckConstraint("tipo_intervencion IN ('Poda de altura', 'Poda de formación', 'Poda de aclareo', 'Raleo', 'Aplicación de fungicida')"),
-
     )
 
     @validates("altura", "diametro_tronco", "ambito", "interferencia_aerea")
@@ -160,3 +156,14 @@ class Medicion(Base):
     arbol = relationship("Arbol", back_populates="mediciones")
     usuario = relationship("Usuario", back_populates="mediciones")
     fotos = relationship("Foto", back_populates="medicion", cascade="all, delete-orphan")
+
+#  modelo Medicion
+class Foto(Base):
+    __tablename__ = "foto"
+
+    id_foto = Column(Integer, primary_key=True, index=True)
+    id_medicion = Column(Integer, ForeignKey("medicion.id_medicion", ondelete="CASCADE"), nullable=False)
+    tipo_foto = Column(String, nullable=False)
+    ruta_foto = Column(String, nullable=False)
+
+    medicion = relationship("Medicion", back_populates="fotos")

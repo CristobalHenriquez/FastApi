@@ -6,13 +6,15 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from . import crud, models, schemas
+from decouple import config
 from .database import get_db
 
 # Configuración
 import os
-SECRET_KEY = os.getenv("SECRET_KEY", "clave_super_segura")  # Deberías almacenar esto en una variable de entorno
+
+SECRET_KEY = config("SECRET_KEY", default="default_secret_key")  # Deberías almacenar esto en una variable de entorno
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = config("ACCESS_TOKEN_EXPIRE_MINUTES", default=30, cast=int)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
